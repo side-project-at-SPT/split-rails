@@ -1,5 +1,7 @@
 # README
 
+demo: https://spt-games-split.zeabur.app/
+
 這是一個使用 Ruby on Rails 實作的簡單專案，目的是實作綿羊爭地盤遊戲。
 
 This is a simple project to implement the game split(https://boardgamegeek.com/boardgame/54137/battle-sheep) by using ruby on rails.

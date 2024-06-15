@@ -54,6 +54,3 @@ test:
 #
 production:
   <<: *default
-  database: split_production
-  username: split
-  password: <%= ENV["SPLIT_DATABASE_PASSWORD"] %>

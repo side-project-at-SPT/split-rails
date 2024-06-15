@@ -21,9 +21,9 @@ FROM base as build
 RUN apt-get update -qq && \
     apt-get install --no-install-recommends -y build-essential git libpq-dev libvips pkg-config
 
-# https://stackoverflow.com/a/78620570
-RUN gem uninstall net-pop
-RUN gem install net-pop
+# # https://stackoverflow.com/a/78620570
+# RUN gem uninstall net-pop
+# RUN gem install net-pop
 
 # Install application gems
 COPY Gemfile Gemfile.lock ./

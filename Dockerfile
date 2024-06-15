@@ -21,12 +21,12 @@ FROM base as build
 RUN apt-get update -qq && \
     apt-get install --no-install-recommends -y build-essential git libpq-dev libvips pkg-config
 
-# Install application gems
-COPY Gemfile Gemfile.lock ./
-
 # https://stackoverflow.com/a/78620570
 RUN gem uninstall net-pop
 RUN gem install net-pop
+
+# Install application gems
+COPY Gemfile Gemfile.lock ./
 
 RUN bundle install && \
     rm -rf ~/.bundle/ "${BUNDLE_PATH}"/ruby/*/cache "${BUNDLE_PATH}"/ruby/*/bundler/gems/*/.git && \

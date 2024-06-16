@@ -2,30 +2,23 @@
   <% if notice.present? %>
     <p class="py-2 px-3 bg-green-50 mb-5 text-green-500 font-medium rounded-lg inline-block" id="notice"><%= notice %></p>
   <% end %>
-
   <div class="mb-5">
     <%= link_to 'Home', root_path, class: "rounded-lg py-3 px-5 bg-blue-600 text-white font-medium" %>
   </div>
-
   <% content_for :title, "Rooms" %>
-
   <div class="flex justify-between items-center">
     <h1 class="font-bold text-4xl">Rooms</h1>
     <%= link_to "New room", new_room_path, class: "rounded-lg py-3 px-5 bg-blue-600 text-white block font-medium" %>
   </div>
-
   <div id="rooms" class="min-w-full">
     <% @rooms.each do |room| %>
       <%= render room %>
       <p>
-
         <% if room.players.include?(current_user) %>
-          <%= link_to "開始遊戲", play_room_path(room), data: { turbo_method: :post }, class: "ml-2 rounded-lg py-3 px-5 bg-green-500 inline-block font-medium" if room.players.size >= 2 %>
           <%= link_to "離開房間", leave_room_path(room), data: { turbo_method: :delete }, class: "ml-2 rounded-lg py-3 px-5 text-white bg-red-600 inline-block font-medium" %>
         <% else %>
           <%= link_to "加入房間", join_room_path(room), data: { turbo_method: :put }, class: "ml-2 rounded-lg py-3 px-5 bg-gray-100 inline-block font-medium" %>
         <% end %>
-
         <%= link_to "Show this room", room, class: "ml-2 rounded-lg py-3 px-5 bg-gray-100 inline-block font-medium" %>
       </p>
     <% end %>

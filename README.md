@@ -109,8 +109,12 @@ This is a simple project to implement the game split(https://boardgamegeek.com/b
 - [ ] create game model
 
   - [x] 開始遊戲
+  - [x] 結束遊戲
   - [ ] 放置綿羊
-  - [ ] 結束遊戲
+
+- [ ] create step model
+
+  - [ ] the step details of the game
 
 ## reference
 

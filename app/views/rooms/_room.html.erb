@@ -10,5 +10,7 @@
       </p>
     <% end %>
   </p>
-
+  <p class="my-5">
+    <%= link_to "開始遊戲", play_room_path(room), data: { turbo_method: :post }, class: "ml-2 rounded-lg py-3 px-5 bg-green-500 inline-block font-medium" if room.players.size >= 2 %>
+  </p>
 </div>

@@ -5,7 +5,7 @@ class Room < ApplicationRecord
 
   validates :name, presence: true
 
-  COLOR = %w[red blue green yellow black white].freeze
+  COLOR = %w[red blue green yellow orange].freeze
 
   def generate_players(seed: 13)
     ret = []

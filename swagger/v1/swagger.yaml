@@ -238,7 +238,6 @@ servers:
     variables:
       defaultHost:
         default: http://localhost:3000
-  - url: "{production}"
-    variables:
-      defaultHost:
-        default: https://spt-games-split.zeabur.app
+        enum:
+          - http://localhost:3000
+          - https://spt-games-split.zeabur.app

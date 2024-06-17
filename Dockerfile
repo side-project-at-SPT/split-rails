@@ -60,7 +60,7 @@ RUN useradd rails --create-home --shell /bin/bash && \
 USER rails:rails
 
 # generate swagger docs
-RUN bundle exec rails rswag
+RUN sed -i -- "s,default: 'http://localhost:3000',default: 'https://spt-games-split.zeabur.app',g" swagger/v1/swagger.yaml
 
 # Entrypoint prepares the database.
 ENTRYPOINT ["/rails/bin/docker-entrypoint"]

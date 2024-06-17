@@ -26,6 +26,7 @@ GEM
       mail (~> 2.5, >= 2.5.4)
       net-imap
       net-pop
+        net-protocol
       net-smtp
       rails-dom-testing (~> 2.2)
     actionpack (7.1.3.4)

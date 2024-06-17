@@ -1,0 +1,200 @@
+---
+openapi: 3.0.1
+info:
+  title: API V1
+  version: v1
+paths:
+  "/api/v1/rooms/{room_id}/game":
+    post:
+      summary: 開始遊戲
+      tags:
+      - Games
+      parameters:
+      - name: room_id
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        '201':
+          description: ok.
+    get:
+      summary: 查詢目前遊戲狀態
+      tags:
+      - Games
+      parameters:
+      - name: room_id
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: ok.
+    delete:
+      summary: 離開遊戲
+      tags:
+      - Games
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: ok.
+  "/api/v1/rooms/{room_id}/game/play-unit":
+    post:
+      summary: 放入棋子
+      tags:
+      - Games
+      parameters: []
+      responses:
+        '200':
+          description: ok.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                x:
+                  type: integer
+                "y":
+                  type: integer
+  "/api/v1/rooms/{room_id}/game/split":
+    post:
+      summary: 分配棋子
+      tags:
+      - Games
+      parameters: []
+      responses:
+        '200':
+          description: ok.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                origin_x:
+                  type: integer
+                origin_y:
+                  type: integer
+                target_x:
+                  type: integer
+                target_y:
+                  type: integer
+                amount:
+                  type: integer
+  "/api/v1/rooms":
+    get:
+      summary: 查詢房間列表
+      tags:
+      - Rooms
+      responses:
+        '200':
+          description: ok.
+    post:
+      summary: 開啟房間
+      tags:
+      - Rooms
+      parameters: []
+      responses:
+        '201':
+          description: ok.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+  "/api/v1/rooms/{id}":
+    get:
+      summary: 查詢房間資料
+      tags:
+      - Rooms
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: ok.
+    put:
+      summary: 加入房間
+      tags:
+      - Rooms
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: ok.
+    delete:
+      summary: 離開房間
+      tags:
+      - Rooms
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: ok.
+  "/api/v1/rooms/{id}/close":
+    post:
+      summary: 關閉房間
+      tags:
+      - Rooms
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: ok.
+  "/api/v1/users":
+    post:
+      summary: 登入
+      tags:
+      - Users
+      parameters: []
+      responses:
+        '200':
+          description: ok.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                id:
+                  type: string
+                password:
+                  type: string
+  "/api/v1/me":
+    post:
+      summary: 查詢個人資料
+      tags:
+      - Users
+      responses:
+        '200':
+          description: ok.
+servers:
+- url: "{defaultHost}"
+  variables:
+    defaultHost:
+      default: http://localhost:3000

@@ -5,4 +5,9 @@ class Visitor < ApplicationRecord
   has_many :rooms, through: :visitors_rooms
 
   validates :name, presence: true, uniqueness: true
+
+  def encode_jwt
+    payload = { sub: id }
+    Api::JsonWebToken.encode payload
+  end
 end

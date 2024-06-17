@@ -3,6 +3,12 @@ openapi: 3.0.1
 info:
   title: API V1
   version: v1
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
 paths:
   "/api/v1/rooms/{room_id}/game":
     post:
@@ -93,6 +99,8 @@ paths:
       summary: 查詢房間列表
       tags:
       - Rooms
+      security:
+      - bearerAuth: []
       responses:
         '200':
           description: ok.
@@ -100,6 +108,8 @@ paths:
       summary: 開啟房間
       tags:
       - Rooms
+      security:
+      - bearerAuth: []
       parameters: []
       responses:
         '201':
@@ -117,6 +127,8 @@ paths:
       summary: 查詢房間資料
       tags:
       - Rooms
+      security:
+      - bearerAuth: []
       parameters:
       - name: id
         in: path
@@ -130,6 +142,8 @@ paths:
       summary: 加入房間
       tags:
       - Rooms
+      security:
+      - bearerAuth: []
       parameters:
       - name: id
         in: path
@@ -143,6 +157,8 @@ paths:
       summary: 離開房間
       tags:
       - Rooms
+      security:
+      - bearerAuth: []
       parameters:
       - name: id
         in: path
@@ -157,6 +173,8 @@ paths:
       summary: 關閉房間
       tags:
       - Rooms
+      security:
+      - bearerAuth: []
       parameters:
       - name: id
         in: path
@@ -181,15 +199,17 @@ paths:
             schema:
               type: object
               properties:
-                id:
+                name:
                   type: string
                 password:
                   type: string
   "/api/v1/me":
-    post:
+    get:
       summary: 查詢個人資料
       tags:
       - Users
+      security:
+      - bearerAuth: []
       responses:
         '200':
           description: ok.

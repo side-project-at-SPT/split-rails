@@ -4,13 +4,15 @@ Rails.application.routes.draw do
 
   namespace :api do
     namespace :v1 do
-      resources :users, only: %i[create show]
-      resources :rooms, only: %i[index show create destroy] do
-        member do
-          put :join
-          delete :leave
-        end
-      end
+      # resources :users, only: %i[create show]
+      post 'users', to: 'users#create'
+      get 'me', to: 'users#show'
+
+      resources :rooms, only: %i[index show create]
+      post 'rooms/:id/close', to: 'rooms#destroy'
+      put 'rooms/:id', to: 'rooms#join'
+      delete 'rooms/:id', to: 'rooms#leave'
+
       resources :games, only: %i[show create destroy] do
         member do
           post :play

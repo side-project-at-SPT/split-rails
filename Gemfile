@@ -68,3 +68,5 @@ gem "htmlbeautifier", "~> 1.4"
 gem "rspec-rails", "~> 6.1"
 
 gem "rswag", "~> 2.13"
+
+gem "jwt", "~> 2.8"

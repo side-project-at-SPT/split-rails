@@ -16,7 +16,7 @@ RSpec.describe "#{version}/Rooms", type: :request do
     get '查詢房間列表' do
       tags "Rooms"
       # description ""
-      # security [bearerAuth: []]
+      security [bearerAuth: []]
       # consumes 'application/json'
       produces 'application/json'
       # parameter name: :user, in: :body, schema: {
@@ -35,7 +35,7 @@ RSpec.describe "#{version}/Rooms", type: :request do
     post '開啟房間' do
       tags "Rooms"
       # description ""
-      # security [bearerAuth: []]
+      security [bearerAuth: []]
       consumes 'application/json'
       produces 'application/json'
       parameter name: :room, in: :body, schema: {
@@ -55,7 +55,7 @@ RSpec.describe "#{version}/Rooms", type: :request do
     get '查詢房間資料' do
       tags "Rooms"
       # description ""
-      # security [bearerAuth: []]
+      security [bearerAuth: []]
       produces 'application/json'
       parameter name: :id, in: :path, type: :string
 
@@ -67,7 +67,7 @@ RSpec.describe "#{version}/Rooms", type: :request do
     put '加入房間' do
       tags "Rooms"
       # description ""
-      # security [bearerAuth: []]
+      security [bearerAuth: []]
       produces 'application/json'
       parameter name: :id, in: :path, type: :string
 
@@ -79,7 +79,7 @@ RSpec.describe "#{version}/Rooms", type: :request do
     delete '離開房間' do
       tags "Rooms"
       # description ""
-      # security [bearerAuth: []]
+      security [bearerAuth: []]
       produces 'application/json'
       parameter name: :id, in: :path, type: :string
 
@@ -93,7 +93,7 @@ RSpec.describe "#{version}/Rooms", type: :request do
     post '關閉房間' do
       tags "Rooms"
       # description ""
-      # security [bearerAuth: []]
+      security [bearerAuth: []]
       produces 'application/json'
       parameter name: :id, in: :path, type: :string
 

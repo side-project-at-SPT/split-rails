@@ -25,4 +25,15 @@ class Room < ApplicationRecord
       g.current_player_index = (seed * 13 + 17) % g.players.size
     end
   end
+
+  def closed?
+    closed_at.present?
+  end
+
+  def close
+    return nil if self.closed?
+    self.closed_at = Time.current
+    self.players = []
+    save!
+  end
 end

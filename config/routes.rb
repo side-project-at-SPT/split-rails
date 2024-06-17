@@ -8,15 +8,16 @@ Rails.application.routes.draw do
       post 'users', to: 'users#create'
       get 'me', to: 'users#show'
 
-      resources :rooms, only: %i[index show create]
       post 'rooms/:id/close', to: 'rooms#destroy'
       put 'rooms/:id', to: 'rooms#join'
       delete 'rooms/:id', to: 'rooms#leave'
-
-      resources :games, only: %i[show create destroy] do
+      resources :rooms, only: %i[index show create] do
         member do
-          post :play
-          post :split
+          get 'game', to: 'games#show'
+          post 'game', to: 'games#create'
+          delete 'game', to: 'games#destroy'
+          post 'game/split', to: 'games#split'
+          post 'game/play-unit', to: 'games#play'
         end
       end
     end

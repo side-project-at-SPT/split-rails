@@ -16,7 +16,7 @@ RSpec.describe "#{version}/Games", type: :request do
     post '開始遊戲' do
       tags "Games"
       # description ""
-      # security [bearerAuth: []]
+      security [bearerAuth: []]
       consumes 'application/json'
       produces 'application/json'
       parameter name: :room_id, in: :path, type: :string
@@ -29,7 +29,7 @@ RSpec.describe "#{version}/Games", type: :request do
     get '查詢目前遊戲狀態' do
       tags "Games"
       # description ""
-      # security [bearerAuth: []]
+      security [bearerAuth: []]
       produces 'application/json'
       parameter name: :room_id, in: :path, type: :string
 
@@ -38,12 +38,12 @@ RSpec.describe "#{version}/Games", type: :request do
       end
     end
 
-    delete '離開遊戲' do
+    delete '結束遊戲' do
       tags "Games"
       # description ""
-      # security [bearerAuth: []]
+      security [bearerAuth: []]
       produces 'application/json'
-      parameter name: :id, in: :path, type: :string
+      parameter name: :room_id, in: :path, type: :string
 
       response 200, 'ok.' do
         xit
@@ -55,9 +55,10 @@ RSpec.describe "#{version}/Games", type: :request do
     post '放入棋子' do
       tags "Games"
       # description ""
-      # security [bearerAuth: []]
+      security [bearerAuth: []]
       consumes 'application/json'
       produces 'application/json'
+      parameter name: :room_id, in: :path, type: :string
       parameter name: :play, in: :body, schema: {
         type: :object,
         properties: {
@@ -77,9 +78,10 @@ RSpec.describe "#{version}/Games", type: :request do
     post '分配棋子' do
       tags "Games"
       # description ""
-      # security [bearerAuth: []]
+      security [bearerAuth: []]
       consumes 'application/json'
       produces 'application/json'
+      parameter name: :room_id, in: :path, type: :string
       parameter name: :split, in: :body, schema: {
         type: :object,
         properties: {

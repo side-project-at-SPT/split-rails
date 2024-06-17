@@ -15,6 +15,8 @@ paths:
       summary: 開始遊戲
       tags:
       - Games
+      security:
+      - bearerAuth: []
       parameters:
       - name: room_id
         in: path
@@ -28,6 +30,8 @@ paths:
       summary: 查詢目前遊戲狀態
       tags:
       - Games
+      security:
+      - bearerAuth: []
       parameters:
       - name: room_id
         in: path
@@ -38,11 +42,13 @@ paths:
         '200':
           description: ok.
     delete:
-      summary: 離開遊戲
+      summary: 結束遊戲
       tags:
       - Games
+      security:
+      - bearerAuth: []
       parameters:
-      - name: id
+      - name: room_id
         in: path
         required: true
         schema:
@@ -55,7 +61,14 @@ paths:
       summary: 放入棋子
       tags:
       - Games
-      parameters: []
+      security:
+      - bearerAuth: []
+      parameters:
+      - name: room_id
+        in: path
+        required: true
+        schema:
+          type: string
       responses:
         '200':
           description: ok.
@@ -74,7 +87,14 @@ paths:
       summary: 分配棋子
       tags:
       - Games
-      parameters: []
+      security:
+      - bearerAuth: []
+      parameters:
+      - name: room_id
+        in: path
+        required: true
+        schema:
+          type: string
       responses:
         '200':
           description: ok.

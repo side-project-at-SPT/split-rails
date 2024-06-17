@@ -1,6 +1,10 @@
 # README
 
-demo: https://spt-games-split.zeabur.app/
+## frontend: https://github.com/side-project-at-SPT/split-front
+
+## doc: https://spt-games-split.zeabur.app/api-docs
+
+## Miro: https://miro.com/app/board/uXjVK7A5iEI=
 
 這是一個使用 Ruby on Rails 實作的簡單專案，目的是實作綿羊爭地盤遊戲。
 

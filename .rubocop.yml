@@ -1,0 +1,10 @@
+AllCops:
+  Exclude:
+    - db/schema.rb
+    - node_modules/**/*
+    - vendor/**/*
+  Metrics/MethodLength:
+    Max: 25
+
+Style/Documentation:
+  Enabled: false

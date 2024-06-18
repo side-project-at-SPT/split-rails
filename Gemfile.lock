@@ -1,3 +1,10 @@
+GIT
+  remote: https://github.com/ruby/net-pop.git
+  revision: e8d0afe2773b9eb6a23c39e9e437f6fc0fc7c733
+  specs:
+    net-pop (0.1.2)
+      net-protocol
+
 GEM
   remote: https://rubygems.org/
   specs:
@@ -16,7 +23,6 @@ GEM
       mail (>= 2.7.1)
       net-imap
       net-pop
-        net-protocol
       net-smtp
     actionmailer (7.1.3.4)
       actionpack (= 7.1.3.4)
@@ -26,7 +32,6 @@ GEM
       mail (~> 2.5, >= 2.5.4)
       net-imap
       net-pop
-        net-protocol
       net-smtp
       rails-dom-testing (~> 2.2)
     actionpack (7.1.3.4)
@@ -79,6 +84,7 @@ GEM
       tzinfo (~> 2.0)
     addressable (2.8.6)
       public_suffix (>= 2.0.2, < 6.0)
+    ast (2.4.2)
     base64 (0.2.0)
     bcrypt (3.1.20)
     bigdecimal (3.1.8)
@@ -112,10 +118,12 @@ GEM
     jbuilder (2.12.0)
       actionview (>= 5.0.0)
       activesupport (>= 5.0.0)
+    json (2.7.2)
     json-schema (4.3.0)
       addressable (>= 2.8)
     jwt (2.8.1)
       base64
+    language_server-protocol (3.17.0.3)
     loofah (2.22.0)
       crass (~> 1.0.2)
       nokogiri (>= 1.12.0)
@@ -123,7 +131,6 @@ GEM
       mini_mime (>= 0.1.1)
       net-imap
       net-pop
-        net-protocol
       net-smtp
     marcel (1.0.4)
     mini_mime (1.1.5)
@@ -132,8 +139,6 @@ GEM
     mutex_m (0.2.0)
     net-imap (0.4.12)
       date
-      net-protocol
-    net-pop (0.1.2)
       net-protocol
     net-protocol (0.2.2)
       timeout
@@ -152,6 +157,10 @@ GEM
       racc (~> 1.4)
     nokogiri (1.16.6-x86_64-linux)
       racc (~> 1.4)
+    parallel (1.25.1)
+    parser (3.3.3.0)
+      ast (~> 2.4.1)
+      racc
     pg (1.5.6)
     psych (5.1.2)
       stringio
@@ -198,6 +207,7 @@ GEM
       rake (>= 12.2)
       thor (~> 1.0, >= 1.2.2)
       zeitwerk (~> 2.6)
+    rainbow (3.1.1)
     rake (13.2.1)
     rdoc (6.7.0)
       psych (>= 4.0.0)
@@ -205,8 +215,11 @@ GEM
       redis-client (>= 0.22.0)
     redis-client (0.22.2)
       connection_pool
+    regexp_parser (2.9.2)
     reline (0.5.9)
       io-console (~> 0.5)
+    rexml (3.3.0)
+      strscan
     rspec-core (3.13.0)
       rspec-support (~> 3.13.0)
     rspec-expectations (3.13.1)
@@ -239,6 +252,20 @@ GEM
     rswag-ui (2.13.0)
       actionpack (>= 3.1, < 7.2)
       railties (>= 3.1, < 7.2)
+    rubocop (1.64.1)
+      json (~> 2.3)
+      language_server-protocol (>= 3.17.0)
+      parallel (~> 1.10)
+      parser (>= 3.3.0.2)
+      rainbow (>= 2.2.2, < 4.0)
+      regexp_parser (>= 1.8, < 3.0)
+      rexml (>= 3.2.5, < 4.0)
+      rubocop-ast (>= 1.31.1, < 2.0)
+      ruby-progressbar (~> 1.7)
+      unicode-display_width (>= 2.4.0, < 3.0)
+    rubocop-ast (1.31.3)
+      parser (>= 3.3.1.0)
+    ruby-progressbar (1.13.0)
     sprockets (4.2.1)
       concurrent-ruby (~> 1.0)
       rack (>= 2.2.4, < 4)
@@ -249,6 +276,7 @@ GEM
     stimulus-rails (1.3.3)
       railties (>= 6.0.0)
     stringio (3.1.1)
+    strscan (3.1.0)
     tailwindcss-rails (2.6.1)
       railties (>= 7.0.0)
     tailwindcss-rails (2.6.1-aarch64-linux)
@@ -269,6 +297,7 @@ GEM
       railties (>= 6.0.0)
     tzinfo (2.0.6)
       concurrent-ruby (~> 1.0)
+    unicode-display_width (2.5.0)
     web-console (4.2.1)
       actionview (>= 6.0.0)
       activemodel (>= 6.0.0)
@@ -296,6 +325,7 @@ DEPENDENCIES
   importmap-rails
   jbuilder
   jwt (~> 2.8)
+  net-pop!
   pg (~> 1.1)
   puma (>= 5.0)
   rack-cors
@@ -303,6 +333,7 @@ DEPENDENCIES
   redis (>= 4.0.1)
   rspec-rails (~> 6.1)
   rswag (~> 2.13)
+  rubocop (~> 1.64)
   sprockets-rails
   stimulus-rails
   tailwindcss-rails

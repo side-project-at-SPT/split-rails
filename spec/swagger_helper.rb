@@ -36,7 +36,8 @@ RSpec.configure do |config|
           url: '{defaultHost}',
           variables: {
             defaultHost: {
-              default: ENV.fetch('ZEABUR_web_DOMAIN', 'http://localhost:3000')
+              default: 'https://spt-games-split.zeabur.app',
+              enum: ['https://spt-games-split.zeabur.app', 'http://localhost:3000']
             }
           }
         }

@@ -5,8 +5,9 @@ Rails.application.routes.draw do
   namespace :api do
     namespace :v1 do
       # resources :users, only: %i[create show]
-      post 'users', to: 'users#create'
       get 'me', to: 'users#show'
+      get 'users', to: 'users#index'
+      post 'users', to: 'users#create'
 
       post 'rooms/:id/close', to: 'rooms#destroy'
       put 'rooms/:id', to: 'rooms#join'
@@ -23,10 +24,6 @@ Rails.application.routes.draw do
     end
   end
 
-
-
-
-
   resources :games
   resources :rooms do
     member do
@@ -41,8 +38,8 @@ Rails.application.routes.draw do
   post '/login', to: 'sessions#create', as: 'user_session'
   delete '/logout', to: 'sessions#destroy', as: 'destroy_user_session'
 
-  root "home#index"
+  root 'home#index'
   # Reveal health status on /up that returns 200 if the app boots with no exceptions, otherwise 500.
   # Can be used by load balancers and uptime monitors to verify that the app is live.
-  get "up" => "rails/health#show", as: :rails_health_check
+  get 'up' => 'rails/health#show', as: :rails_health_check
 end

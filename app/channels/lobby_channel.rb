@@ -14,6 +14,19 @@ class LobbyChannel < ApplicationCable::Channel
     ActionCable.server.broadcast 'lobby_channel', "Hello, World! #{$redis.hlen('lobby_channel_users')}"
   end
 
+  def receive(data)
+    pp "receive: #{data}"
+    # pp data.class
+    # puts "receive: #{data}"
+    # ActionCable.server.broadcast 'lobby_channel', data
+  end
+
+  def echo
+    puts 'echo'
+    puts params
+    # ActionCable.server.broadcast 'lobby_channel', 'Hello, World!'
+  end
+
   def unsubscribed
     # Any cleanup needed when channel is unsubscribed
     # $redis.decr('lobby_channel_count')

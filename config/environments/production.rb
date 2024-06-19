@@ -44,7 +44,9 @@ Rails.application.configure do
   # config.action_cable.url = "wss://example.com/cable"
   # config.action_cable.allowed_request_origins = [ "http://example.com", /http:\/\/example.*/ ]
   config.action_cable.allowed_request_origins = [
-    'http://localhost:3000', 'https://split-sheep-spt.zeabur.app'
+    'http://localhost:3000',
+    'http://localhost:5173',
+    'https://split-sheep-spt.zeabur.app'
   ]
 
   # Assume all access to the app is happening through a SSL-terminating reverse proxy.

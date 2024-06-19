@@ -30,7 +30,7 @@ module ApplicationCable
       Rails.logger.info { "decoded_token: #{decoded_token}" }
       Rails.logger.info { 'try to find the user' }
 
-      if current_user = Visitor.find_by(id: decoded_token[:visitor_id])
+      if current_user = Visitor.find_by(id: decoded_token[:sub])
         current_user
       else
         # reject_unauthorized_connection

@@ -3,6 +3,11 @@ module Api
     class BaseController < ApplicationController
       skip_before_action :verify_authenticity_token
       before_action :load_jwt_request
+      rescue_from ActionController::ParameterMissing, with: :render_parameter_missing
+
+      def render_parameter_missing(exception)
+        render json: { errors: exception.message }, status: :bad_request
+      end
 
       private
 

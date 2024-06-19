@@ -19,11 +19,11 @@ module ApplicationCable
 
       Rails.logger.info { 'Connection#find_verified_user' }
       Rails.logger.info { 'try to decode the token' }
-      auth_token = request.headers['Authorization']
+      auth_token = request.GET[:token]
 
       if auth_token.nil?
         Rails.logger.info { 'No Authorization header' }
-        # return reject_unauthorized_connection
+        return reject_unauthorized_connection
       else
         token = auth_token.gsub(/^Bearer /, '')
         decoded_token = Api::JsonWebToken.decode(token)
@@ -35,8 +35,8 @@ module ApplicationCable
         end
       end
 
-      # reject_unauthorized_connection
-      'guest_' + SecureRandom.hex(10) + Time.now.to_i.to_s
+      reject_unauthorized_connection
+      # 'guest_' + SecureRandom.hex(10) + Time.now.to_i.to_s
     rescue JWT::VerificationError, JWT::DecodeError => e
       Rails.logger.error { "Error decoding the token: #{e.message}" }
       reject_unauthorized_connection

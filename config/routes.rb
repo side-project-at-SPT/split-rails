@@ -4,10 +4,9 @@ Rails.application.routes.draw do
 
   namespace :api do
     namespace :v1 do
-      # resources :users, only: %i[create show]
+      resources :users, only: %i[create show]
       get 'me', to: 'users#show'
-      get 'users', to: 'users#index'
-      post 'users', to: 'users#create'
+      resource :preferences, only: %i[show update]
 
       post 'rooms/:id/close', to: 'rooms#destroy'
       put 'rooms/:id', to: 'rooms#join'

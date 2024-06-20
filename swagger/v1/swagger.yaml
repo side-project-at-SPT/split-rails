@@ -114,6 +114,36 @@ paths:
                   type: integer
                 amount:
                   type: integer
+  "/api/v1/preferences":
+    patch:
+      summary: 更新偏好設定
+      tags:
+      - Users/Preferences
+      security:
+      - bearerAuth: []
+      parameters: []
+      responses:
+        '200':
+          description: ok.
+        '304':
+          description: not modified.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                nickname:
+                  type: string
+    get:
+      summary: 查詢偏好設定
+      tags:
+      - Users/Preferences
+      security:
+      - bearerAuth: []
+      responses:
+        '200':
+          description: ok.
   "/api/v1/rooms":
     get:
       summary: 查詢房間列表

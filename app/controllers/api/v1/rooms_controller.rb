@@ -3,7 +3,7 @@ module Api
     class RoomsController < BaseController
       # GET /api/v1/rooms
       def index
-        @rooms = Room.where(closed_at: nil).joins(:players, :games).distinct
+        @rooms = Room.where(closed_at: nil).left_outer_joins(:players, :games).distinct.includes(:players, :games)
 
         render status: :ok
       end

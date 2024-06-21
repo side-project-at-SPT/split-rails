@@ -5,6 +5,11 @@ module Api
       before_action :load_jwt_request
       rescue_from ActionController::ParameterMissing, with: :render_parameter_missing
 
+      # force response to be JSON
+      before_action do
+        request.format = :json
+      end
+
       def render_parameter_missing(exception)
         render json: { errors: exception.message }, status: :bad_request
       end
@@ -20,7 +25,7 @@ module Api
         begin
           @jwt_request = Api::JsonWebToken.decode(decoded)
         rescue JWT::DecodeError
-          return render json: { errors: 'Failed to authenticate' }, status: :unauthorized
+          render json: { errors: 'Failed to authenticate' }, status: :unauthorized
         end
       end
     end

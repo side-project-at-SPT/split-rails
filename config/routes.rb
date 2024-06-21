@@ -4,7 +4,7 @@ Rails.application.routes.draw do
 
   namespace :api do
     namespace :v1 do
-      resources :users, only: %i[create show]
+      resources :users, only: %i[create index]
       get 'me', to: 'users#show'
       resource :preferences, only: %i[show update]
 

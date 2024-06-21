@@ -19,9 +19,9 @@ class Room < ApplicationRecord
 
   def start_new_game
     Game.create do |g|
-      seed = self.created_at.to_i
+      seed = created_at.to_i
       g.room = self
-      g.players = self.generate_players(seed: seed)
+      g.players = generate_players(seed:)
       g.current_player_index = (seed * 13 + 17) % g.players.size
     end
   end
@@ -31,9 +31,18 @@ class Room < ApplicationRecord
   end
 
   def close
-    return nil if self.closed?
+    return nil if closed?
+
     self.closed_at = Time.current
     self.players = []
     save!
+  end
+
+  def status
+    if games.last&.on_going?
+      'playing'
+    else
+      'waiting'
+    end
   end
 end

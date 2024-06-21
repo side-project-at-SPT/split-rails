@@ -26,4 +26,8 @@ class Visitor < ApplicationRecord
       hash[key] = preferences[key] || 'none'
     end
   end
+
+  def room_id
+    rooms.first&.id
+  end
 end

@@ -5,10 +5,9 @@ module Api
 
       # GET /api/v1/users
       def index
-        online_users_count = $redis.hlen('lobby_channel_users')
-        online_users = $redis.hgetall('lobby_channel_users').map { |id, name| { id:, name: } }
+        @users = Visitor.all
 
-        render json: { online_users_count:, online_users: }, status: :ok
+        render status: :ok
       end
 
       # POST /api/v1/users
@@ -19,9 +18,12 @@ module Api
         name = params.fetch(:name)
         password = params.fetch(:password)
 
-        return render json: { error: 'Password must be a string with at least 6 characters' }, status: :bad_request unless password.is_a?(String) && password.length >= 6
+        unless password.is_a?(String) && password.length >= 6
+          return render json: { error: 'Password must be a string with at least 6 characters' },
+                        status: :bad_request
+        end
 
-        user = Visitor.find_or_initialize_by(name: name)
+        user = Visitor.find_or_initialize_by(name:)
 
         if user.new_record?
           user.password = password

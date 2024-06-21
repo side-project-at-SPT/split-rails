@@ -19,11 +19,16 @@ module Api
 
       # POST /api/v1/rooms
       def create
-        room = Room.create!(name: params[:name])
-        user = Visitor.find(@jwt_request['sub'])
-        room.players << user
+        @room = Room.create!(name: params.fetch(:name, 'New Room'))
 
-        render json: { room: }, status: :created
+        # Deprecated: User is automatically joined to the room
+        # Reason: User should join the room explicitly by calling /api/v1/rooms/:id/join or with websocket call
+        # user = Visitor.find(@jwt_request['sub'])
+        # room.players << user
+
+        Domain::CreateRoomEvent.new(room_id: @room.id).dispatch
+
+        render status: :created
       end
 
       # DELETE /api/v1/rooms/:id/close

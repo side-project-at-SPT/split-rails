@@ -31,6 +31,18 @@ class Visitor < ApplicationRecord
     self.preferences&.dig('nickname') || 'none'
   end
 
+  def ready?
+    visitors_rooms.find_by(room_id:)&.ready
+  end
+
+  def ready!
+    visitors_rooms.find_by(room_id:)&.ready!
+  end
+
+  def character
+    visitors_rooms.find_by(room_id:)&.character
+  end
+
   def room_id
     rooms.first&.id
   end

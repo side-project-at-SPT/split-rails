@@ -18,6 +18,12 @@ class RoomChannel < ApplicationCable::Channel
     # stop_all_streams
   end
 
+  def ready
+    current_user.ready!
+    current_user.reload
+    dispatch_to_room('ready', current_user)
+  end
+
   private
 
   def room_join_with(player)
@@ -42,7 +48,9 @@ class RoomChannel < ApplicationCable::Channel
         event:,
         player: {
           id: player.id,
-          nickname: player.nickname
+          nickname: player.nickname,
+          character: player.character,
+          is_ready: player.ready?
         }
       }
     )

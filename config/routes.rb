@@ -9,8 +9,6 @@ Rails.application.routes.draw do
       resource :preferences, only: %i[show update]
 
       post 'rooms/:id/close', to: 'rooms#destroy'
-      put 'rooms/:id', to: 'rooms#join'
-      delete 'rooms/:id', to: 'rooms#leave'
       resources :rooms, only: %i[index show create] do
         member do
           get 'game', to: 'games#show'

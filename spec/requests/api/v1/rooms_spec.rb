@@ -4,7 +4,6 @@ require 'swagger_helper'
 version = 'v1'
 
 RSpec.describe "#{version}/Rooms", type: :request do
-
   # let :Authorization do
   #   payload = { sub: user.id }
   #   token = Api::JsonWebToken.encode payload
@@ -14,7 +13,7 @@ RSpec.describe "#{version}/Rooms", type: :request do
 
   path "/api/#{version}/rooms" do
     get '查詢房間列表' do
-      tags "Rooms"
+      tags 'Rooms'
       # description ""
       security [bearerAuth: []]
       # consumes 'application/json'
@@ -33,7 +32,7 @@ RSpec.describe "#{version}/Rooms", type: :request do
     end
 
     post '開啟房間' do
-      tags "Rooms"
+      tags 'Rooms'
       # description ""
       security [bearerAuth: []]
       consumes 'application/json'
@@ -41,7 +40,7 @@ RSpec.describe "#{version}/Rooms", type: :request do
       parameter name: :room, in: :body, schema: {
         type: :object,
         properties: {
-          name: { type: :string },
+          name: { type: :string }
         }
       }
 
@@ -53,31 +52,7 @@ RSpec.describe "#{version}/Rooms", type: :request do
 
   path "/api/#{version}/rooms/{id}" do
     get '查詢房間資料' do
-      tags "Rooms"
-      # description ""
-      security [bearerAuth: []]
-      produces 'application/json'
-      parameter name: :id, in: :path, type: :string
-
-      response 200, 'ok.' do
-        xit
-      end
-    end
-
-    put '加入房間' do
-      tags "Rooms"
-      # description ""
-      security [bearerAuth: []]
-      produces 'application/json'
-      parameter name: :id, in: :path, type: :string
-
-      response 200, 'ok.' do
-        xit
-      end
-    end
-
-    delete '離開房間' do
-      tags "Rooms"
+      tags 'Rooms'
       # description ""
       security [bearerAuth: []]
       produces 'application/json'
@@ -91,7 +66,7 @@ RSpec.describe "#{version}/Rooms", type: :request do
 
   path "/api/#{version}/rooms/{id}/close" do
     post '關閉房間' do
-      tags "Rooms"
+      tags 'Rooms'
       # description ""
       security [bearerAuth: []]
       produces 'application/json'

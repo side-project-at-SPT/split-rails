@@ -49,45 +49,6 @@ module Api
 
         head :ok
       end
-
-      # TODO: Implement this
-      # POST /api/v1/rooms/:id/join
-      # 加入房間
-      def join
-        return render json: { error: 'Not Implemented' }, status: :not_implemented
-
-        room = Room.find_by(id: params[:id])
-        return render json: { error: 'Room not found' }, status: :not_found unless room
-
-        # return render json: { error: 'You are already in this room' }, status: :unprocessable_entity if room.players.include?(@jwt_request['sub'])
-
-        user = Visitor.find(@jwt_request['sub'])
-
-        return render json: { room: }, status: :ok if room.players.include?(user)
-
-        room.players << user
-
-        render json: { room: }, status: :ok
-      end
-
-      # POST /api/v1/rooms/:id/leave
-      # 離開房間
-      def leave
-        room = Room.find_by(id: params[:id])
-        return render json: { error: 'Room not found' }, status: :not_found unless room
-
-        user = Visitor.find(@jwt_request['sub'])
-
-        unless room.players.include?(user)
-          return render json: { error: 'You are not in this room' },
-                        status: :unprocessable_entity
-        end
-
-        room.players.delete(user)
-        room.save!
-
-        render json: { room: }, status: :ok
-      end
     end
   end
 end

@@ -30,8 +30,9 @@ class RoomChannel < ApplicationCable::Channel
   end
 
   def room_leave_with(player)
-    # TODO: Implement this
-    Rails.logger.debug('Not Implemented')
+    @room.players.delete(player)
+    dispatch_to_room('leave_room', player)
+    dispatch_to_lobby('leave_room', @room)
   end
 
   def dispatch_to_room(event, player)

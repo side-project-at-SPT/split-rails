@@ -188,36 +188,6 @@ paths:
       responses:
         '200':
           description: ok.
-    put:
-      summary: 加入房間
-      tags:
-      - Rooms
-      security:
-      - bearerAuth: []
-      parameters:
-      - name: id
-        in: path
-        required: true
-        schema:
-          type: string
-      responses:
-        '200':
-          description: ok.
-    delete:
-      summary: 離開房間
-      tags:
-      - Rooms
-      security:
-      - bearerAuth: []
-      parameters:
-      - name: id
-        in: path
-        required: true
-        schema:
-          type: string
-      responses:
-        '200':
-          description: ok.
   "/api/v1/rooms/{id}/close":
     post:
       summary: 關閉房間

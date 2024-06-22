@@ -50,9 +50,12 @@ module Api
         head :ok
       end
 
+      # TODO: Implement this
       # POST /api/v1/rooms/:id/join
       # 加入房間
       def join
+        return render json: { error: 'Not Implemented' }, status: :not_implemented
+
         room = Room.find_by(id: params[:id])
         return render json: { error: 'Room not found' }, status: :not_found unless room
 

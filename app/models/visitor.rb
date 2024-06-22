@@ -27,6 +27,10 @@ class Visitor < ApplicationRecord
     end
   end
 
+  def nickname
+    self.preferences&.dig('nickname') || 'none'
+  end
+
   def room_id
     rooms.first&.id
   end

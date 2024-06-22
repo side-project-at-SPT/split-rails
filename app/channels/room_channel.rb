@@ -7,9 +7,8 @@ class RoomChannel < ApplicationCable::Channel
       return
     end
 
-    room_join_with(current_user)
-
     stream_for(@room)
+    room_join_with(current_user)
   end
 
   def unsubscribed

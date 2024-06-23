@@ -18,6 +18,8 @@ class RoomChannel < ApplicationCable::Channel
   end
 
   def ready
+    reject and return if current_user.room.nil?
+
     current_user.ready!
     current_user.reload
     dispatch_to_room('ready', current_user)

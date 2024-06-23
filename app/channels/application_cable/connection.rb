@@ -4,7 +4,7 @@ module ApplicationCable
 
     def connect
       self.current_user = find_verified_user
-      Rails.logger.debug { 'Connection#connect' }
+      logger.add_tags "#{current_user.id}, #{current_user.nickname}"
     end
 
     private

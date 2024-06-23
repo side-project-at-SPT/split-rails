@@ -1,8 +1,8 @@
 class Visitor < ApplicationRecord
   has_secure_password
 
-  has_many :visitors_rooms, dependent: :destroy
-  has_many :rooms, through: :visitors_rooms
+  has_one :visitors_room, dependent: :destroy
+  has_one :room, through: :visitors_room
 
   validates :name, presence: true, uniqueness: true
   validate :allow_preferences_attributes?
@@ -31,19 +31,19 @@ class Visitor < ApplicationRecord
     self.preferences&.dig('nickname') || 'none'
   end
 
+  # delegate 'ready?', to: :visitors_room,  allow_nil: true
+
   def ready?
-    visitors_rooms.find_by(room_id:)&.ready
+    visitors_room&.ready? || false
   end
 
   def ready!
-    visitors_rooms.find_by(room_id:)&.ready!
+    visitors_room&.ready!
   end
 
   def character
-    visitors_rooms.find_by(room_id:)&.character
+    visitors_room&.character
   end
 
-  def room_id
-    rooms.first&.id
-  end
+  delegate :id, :name, to: :room, prefix: true, allow_nil: true
 end

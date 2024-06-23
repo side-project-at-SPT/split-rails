@@ -38,9 +38,38 @@ class Room < ApplicationRecord
     save!
   end
 
+  def start_in_seconds?
+    if status == 'waiting' && players.size >= 2 && players.all?(&:ready?)
+      countdown_game_start
+      true
+    else
+      false
+    end
+  end
+
+  def start_in_seconds
+    $redis.get("room_#{id}:game_start_in_seconds").to_i
+  end
+
+  def countdown_game_start(seconds: 5)
+    $redis.set("room_#{id}:game_start_in_seconds", seconds)
+  end
+
+  def countdown
+    Rails.logger.debug("countdown: #{start_in_seconds}")
+
+    return unless start_in_seconds.positive?
+
+    sleep 1
+
+    $redis.decr("room_#{id}:game_start_in_seconds")
+  end
+
   def status
     if games.last&.on_going?
       'playing'
+    elsif start_in_seconds.positive?
+      'starting'
     else
       'waiting'
     end

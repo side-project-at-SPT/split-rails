@@ -23,6 +23,34 @@ class RoomChannel < ApplicationCable::Channel
     current_user.ready!
     current_user.reload
     dispatch_to_room('ready', current_user)
+
+    return unless @room.start_in_seconds?
+
+    dispatch_to_lobby('game_is_starting', @room)
+
+    while @room.status == 'starting'
+      broadcast_to(@room, { event: 'game_start_in_seconds', seconds: @room.start_in_seconds })
+      @room.countdown
+
+      return if interrupt_start_game
+    end
+
+    @room.start_new_game
+
+    broadcast_to(@room, { event: 'game_started', game_id: @room.games.last.id })
+    dispatch_to_lobby('game_started', @room)
+  end
+
+  def close_game
+    # Rails.logger.debug('Hello World')
+
+    game = @room.games.last
+    return unless game&.on_going?
+
+    game.close
+    broadcast_to(@room.reload, { event: 'game_closed' })
+    Rails.logger.debug("Game Status: #{@room.status}")
+    dispatch_to_lobby('game_closed', @room.reload)
   end
 
   private
@@ -40,6 +68,15 @@ class RoomChannel < ApplicationCable::Channel
     @room.players.delete(player)
     dispatch_to_room('leave_room', player)
     dispatch_to_lobby('leave_room', @room)
+  end
+
+  def interrupt_start_game
+    key = "room_#{@room_id}:start_game_interrupted"
+    return false unless $redis.get(key)
+
+    $redis.del(key)
+
+    broadcast_to(@room, { event: 'starting_game_is_cancelled' })
   end
 
   def dispatch_to_room(event, player)
@@ -71,10 +108,13 @@ class RoomChannel < ApplicationCable::Channel
             players: room.players.map do |player|
                        {
                          id: player.id,
-                         nickname: player.nickname
+                         nickname: player.nickname,
+                         character: player.character,
+                         is_ready: player.ready?
                        }
                      end
-          }
+          },
+          status: room.status
         }
       )
   end

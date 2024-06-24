@@ -11,7 +11,12 @@ class Room < ApplicationRecord
     ret = []
     colors = COLOR.shuffle
     players.rotate(seed).each_with_index do |player, i|
-      ret << { name: player.name, color: colors[i] }
+      ret << {
+        id: player.id,
+        nickname: player.nickname,
+        color: colors[i],
+        character: player.character
+      }
     end
 
     ret

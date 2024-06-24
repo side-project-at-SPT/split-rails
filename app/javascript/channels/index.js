@@ -2,3 +2,4 @@
 import "channels/test_channel"
 import "channels/lobby_channel"
 import "channels/room_channel"
+import "channels/game_channel"

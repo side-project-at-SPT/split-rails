@@ -1,19 +1,19 @@
 class RoomChannel < ApplicationCable::Channel
   def subscribed
-    @room = Room.find_by(id: params[:room_id])
+    room = Room.find_by(id: params[:room_id])
 
-    if @room.nil?
+    if room.nil?
       reject
       return
     end
 
-    stream_for(@room)
-    room_join_with(current_user)
+    stream_for(room)
+    room_join_with(room, current_user)
   end
 
   def unsubscribed
     # Any cleanup needed when channel is unsubscribed
-    room_leave_with(current_user)
+    room_leave_with(room, current_user)
     # stop_all_streams
   end
 
@@ -22,68 +22,11 @@ class RoomChannel < ApplicationCable::Channel
 
     current_user.ready!
     current_user.reload
-    dispatch_to_room('ready', current_user)
-
-    return unless @room.start_in_seconds?
-
-    dispatch_to_lobby('game_is_starting', @room)
-
-    while @room.status == 'starting'
-      broadcast_to(@room, { event: 'game_start_in_seconds', seconds: @room.start_in_seconds })
-      @room.countdown
-
-      return if interrupt_start_game
-    end
-
-    @room.start_new_game
-
-    broadcast_to(@room, { event: 'game_started', game_id: @room.games.last.id })
-    dispatch_to_lobby('game_started', @room)
-  end
-
-  def close_game
-    # Rails.logger.debug('Hello World')
-
-    game = @room.games.last
-    return unless game&.on_going?
-
-    game.close
-    broadcast_to(@room.reload, { event: 'game_closed' })
-    Rails.logger.debug("Game Status: #{@room.status}")
-    dispatch_to_lobby('game_closed', @room.reload)
-  end
-
-  private
-
-  def room_join_with(player)
-    reject and return if @room.players.include?(player)
-
-    @room.players << player unless @room.players.include?(player)
-
-    dispatch_to_room('join_room', player)
-    dispatch_to_lobby('join_room', @room)
-  end
-
-  def room_leave_with(player)
-    @room.players.delete(player)
-    dispatch_to_room('leave_room', player)
-    dispatch_to_lobby('leave_room', @room)
-  end
-
-  def interrupt_start_game
-    key = "room_#{@room_id}:start_game_interrupted"
-    return false unless $redis.get(key)
-
-    $redis.del(key)
-
-    broadcast_to(@room, { event: 'starting_game_is_cancelled' })
-  end
-
-  def dispatch_to_room(event, player)
+    room = current_user.room
     broadcast_to(
-      @room,
+      room,
       {
-        event:,
+        event: 'ready',
         player: {
           id: player.id,
           nickname: player.nickname,
@@ -92,6 +35,75 @@ class RoomChannel < ApplicationCable::Channel
         }
       }
     )
+
+    return unless room.start_in_seconds?
+
+    dispatch_to_lobby('game_is_starting', room)
+
+    while room.status == 'starting'
+      broadcast_to(room, { event: 'game_start_in_seconds', seconds: room.start_in_seconds })
+      room.countdown
+
+      return if interrupt_start_game
+    end
+
+    room.start_new_game
+
+    broadcast_to(room, { event: 'game_started', game_id: room.games.last.id })
+    dispatch_to_lobby('game_started', room)
+  end
+
+  def close_game
+    game = current_user.room.games.last
+    return unless game&.on_going?
+
+    game.close
+    broadcast_to(room.reload, { event: 'game_closed' })
+    Rails.logger.debug("Game Status: #{room.status}")
+    dispatch_to_lobby('game_closed', room.reload)
+  end
+
+  private
+
+  def room_join_with(room, player)
+    reject and return if room.players.include?(player)
+
+    room.players << player unless room.players.include?(player)
+
+    broadcast_to(room, {
+                   event: 'join_room',
+                   player: {
+                     id: player.id,
+                     nickname: player.nickname,
+                     character: player.character,
+                     is_ready: player.ready?
+                   }
+                 })
+    dispatch_to_lobby('join_room', room)
+  end
+
+  def room_leave_with(room, player)
+    room.players.delete(player)
+    broadcast_to(room, {
+                   event: 'leave_room',
+                   player: {
+                     id: player.id,
+                     nickname: player.nickname,
+                     character: player.character,
+                     is_ready: player.ready?
+                   }
+                 })
+    dispatch_to_lobby('leave_room', room)
+  end
+
+  def interrupt_start_game
+    room = current_user.room
+    key = "room_#{room.id}:start_game_interrupted"
+    return false unless $redis.get(key)
+
+    $redis.del(key)
+
+    broadcast_to(room, { event: 'starting_game_is_cancelled' })
   end
 
   def dispatch_to_lobby(event, room)

@@ -20,11 +20,14 @@ class RoomChannel < ApplicationCable::Channel
   end
 
   def ready
-    reject and return if current_user.room.nil?
+    room = Room.find_by(id: params[:room_id])
+
+    reject and return if room.nil?
+    reject and return if room.players.exclude?(current_user)
 
     current_user.ready!
-    current_user.reload
-    room = current_user.room.reload
+    # current_user.reload
+    # room = current_user.room.reload
     broadcast_to(
       room,
       {

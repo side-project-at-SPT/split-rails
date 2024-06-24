@@ -24,7 +24,7 @@ class RoomChannel < ApplicationCable::Channel
 
     current_user.ready!
     current_user.reload
-    room = current_user.room
+    room = current_user.room.reload
     broadcast_to(
       room,
       {

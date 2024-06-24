@@ -39,7 +39,7 @@ class Room < ApplicationRecord
   end
 
   def start_in_seconds?
-    players = room.players.reload
+    players = self.players.reload
     Rails.logger.warn { "status: #{status}, players: #{players.size}, all ready: #{players.all?(&:ready?)}" }
     if status == 'waiting' && players.size >= 2 && players.all?(&:ready?)
       Rails.logger.warn { 'countdown game start' }

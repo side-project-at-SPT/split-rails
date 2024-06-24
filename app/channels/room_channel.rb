@@ -13,6 +13,8 @@ class RoomChannel < ApplicationCable::Channel
 
   def unsubscribed
     # Any cleanup needed when channel is unsubscribed
+    room = Room.find_by(id: params[:room_id])
+
     room_leave_with(room, current_user)
     # stop_all_streams
   end

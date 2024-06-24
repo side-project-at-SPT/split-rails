@@ -28,10 +28,10 @@ class RoomChannel < ApplicationCable::Channel
       {
         event: 'ready',
         player: {
-          id: player.id,
-          nickname: player.nickname,
-          character: player.character,
-          is_ready: player.ready?
+          id: current_user.id,
+          nickname: current_user.nickname,
+          character: current_user.character,
+          is_ready: current_user.ready?
         }
       }
     )
@@ -54,13 +54,14 @@ class RoomChannel < ApplicationCable::Channel
   end
 
   def close_game
-    game = current_user.room.games.last
+    room = current_user.room
+    game = room.games.last
     return unless game&.on_going?
 
     game.close
-    broadcast_to(room.reload, { event: 'game_closed' })
+    broadcast_to(room, { event: 'game_closed' })
     Rails.logger.debug("Game Status: #{room.status}")
-    dispatch_to_lobby('game_closed', room.reload)
+    dispatch_to_lobby('game_closed', room)
   end
 
   private

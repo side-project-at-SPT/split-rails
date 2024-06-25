@@ -16,6 +16,14 @@ class GameChannel < ApplicationCable::Channel
 
   private
 
+  # def current_game_state
+  #   {
+  #     id: @game.id,
+  #     players: player_state,
+  #     steps: @game.steps
+  #   }
+  # end
+
   def player_joined_game(game_id, player_id)
     key = "game_#{game_id}:#{player_id}:connected"
     $redis.set(key, true, ex: 1.hour.to_i)

@@ -11,13 +11,14 @@ Rails.application.routes.draw do
       post 'rooms/:id/close', to: 'rooms#destroy'
       resources :rooms, only: %i[index show create] do
         member do
-          get 'game', to: 'games#show'
+          # get 'game', to: 'games#show'
           post 'game', to: 'games#create'
           delete 'game', to: 'games#destroy'
           post 'game/split', to: 'games#split'
           post 'game/play-unit', to: 'games#play'
         end
       end
+      resources :games, only: %i[show]
     end
   end
 

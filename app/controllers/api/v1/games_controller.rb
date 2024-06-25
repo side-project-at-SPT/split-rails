@@ -4,7 +4,6 @@ module Api
       before_action :find_game, only: %i[show destroy play split]
       # show create destroy play split
 
-
       # POST /api/v1/rooms/:id/game
       # 開始遊戲
       def create
@@ -13,7 +12,10 @@ module Api
         return render json: { error: 'Room is already closed' }, status: :unprocessable_entity if room.closed?
 
         user = Visitor.find(@jwt_request['sub'])
-        return render json: { error: 'You are not in this room' }, status: :unauthorized unless room.players.include?(user)
+        unless room.players.include?(user)
+          return render json: { error: 'You are not in this room' },
+                        status: :unauthorized
+        end
 
         if room.games.last&.on_going?
           return render json: { error: 'Game is already on going' }, status: :unprocessable_entity
@@ -26,10 +28,12 @@ module Api
         render json: { game: room.games.last }, status: :created
       end
 
-      # GET /api/v1/rooms/:id/game
+      # GET /api/v1/games/:id?step=0
       # 查詢目前遊戲狀態
       def show
-        render json: { game: @game }, status: :ok
+        @step = params.key?(:step) ? params[:step].to_i : @game.steps.size
+
+        render status: :ok
       end
 
       # DELETE /api/v1/rooms/:id/game
@@ -46,15 +50,22 @@ module Api
       # params: { x: 0, y: 0 }
       def play
         return render json: { error: 'Game is already finished' }, status: :unprocessable_entity if @game.finished?
-        return render json: { error: 'Not your turn' }, status: :unprocessable_entity unless @game.current_player["name"] == @user.name
+
+        unless @game.current_player['name'] == @user.name
+          return render json: { error: 'Not your turn' },
+                        status: :unprocessable_entity
+        end
         if @game.steps.size >= @game.players.size
           # all players have played their pieces
           return render json: { error: 'All players have played their pieces' }, status: :unprocessable_entity
         end
 
-        return render json: { error: 'Invalid position' }, status: :unprocessable_entity unless @game.valid_position?(params)
+        unless @game.valid_position?(params)
+          return render json: { error: 'Invalid position' },
+                        status: :unprocessable_entity
+        end
 
-        @game.steps << { x: params[:x], y: params[:y], color: @game.current_player["color"] }
+        @game.steps << { x: params[:x], y: params[:y], color: @game.current_player['color'] }
         @game.current_player_index = (@game.current_player_index + 1) % @game.players.size
         @game.save!
 
@@ -66,12 +77,17 @@ module Api
       # params: { origin_x: 1, origin_y: 1, target_x: 0, target_y: 0, amount: 1 }
       def split
         return render json: { error: 'Game is already finished' }, status: :unprocessable_entity if @game.finished?
-        return render json: { error: 'Not your turn' }, status: :unprocessable_entity unless @game.current_player["name"] == @user.name
-        return render json: { error: 'Invalid position' }, status: :unprocessable_entity unless @game.valid_position?(params)
 
-        if params[:amount].to_i < 1
-          return render json: { error: 'Invalid amount' }, status: :unprocessable_entity
+        unless @game.current_player['name'] == @user.name
+          return render json: { error: 'Not your turn' },
+                        status: :unprocessable_entity
         end
+        unless @game.valid_position?(params)
+          return render json: { error: 'Invalid position' },
+                        status: :unprocessable_entity
+        end
+
+        return render json: { error: 'Invalid amount' }, status: :unprocessable_entity if params[:amount].to_i < 1
 
         @game.steps << {
           origin_x: params[:origin_x],
@@ -79,7 +95,7 @@ module Api
           target_x: params[:target_x],
           target_y: params[:target_y],
           amount: params[:amount],
-          color: @game.current_player["color"]
+          color: @game.current_player['color']
         }
         @game.current_player_index = (@game.current_player_index + 1) % @game.players.size
         @game.save!
@@ -90,15 +106,20 @@ module Api
       private
 
       def find_game
-        room = Room.find_by(id: params[:id])
-        return render json: { error: 'Room not found' }, status: :not_found unless room
-        return render json: { error: 'Room is already closed' }, status: :unprocessable_entity if room.closed?
-        @user = Visitor.find(@jwt_request['sub'])
-        return render json: { error: 'You are not in this room' }, status: :unauthorized unless room.players.include?(@user)
-
-        @game = room.games.last
-        return render json: { error: 'Game is finished' }, status: :unprocessable_entity if @game&.finished?
+        @game = Game.find_by(id: params[:id])
         return render json: { error: 'Game not found' }, status: :not_found unless @game
+
+        # return render json: { error: 'Room is already closed' }, status: :unprocessable_entity if @room.closed?
+
+        # @user = Visitor.find(@jwt_request['sub'])
+        # unless room.players.include?(@user)
+        #   return render json: { error: 'You are not in this room' },
+        #                 status: :unauthorized
+        # end
+
+        # @game = room.games.last
+        # return render json: { error: 'Game is finished' }, status: :unprocessable_entity if @game&.finished?
+        # return render json: { error: 'Game not found' }, status: :not_found unless @game
 
         @game
       end

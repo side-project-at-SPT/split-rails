@@ -1,9 +1,36 @@
-<div class="mx-auto md:w-2/3 w-full flex">
+<div class="mx-auto w-full flex">
   <div class="mx-auto">
     <% if notice.present? %>
       <p class="py-2 px-3 bg-green-50 mb-5 text-green-500 font-medium rounded-lg inline-block" id="notice"><%= notice %></p>
     <% end %>
-    <%= render @game %>
+    <div class="w-full flex flex-col aspect-square outline p-3">
+      <div id="game-map" class="h-fit grid outline outline-amber-300"></div>
+      <div id="game-console" class="p-3 grow h-40 flex flex-col justify-end outline-blue-300 outline overflow-hidden"></div>
+      <div class="btn-group h-[15%]  mt-5 flex justify-center">
+        <button id="clear-console-btn" type="button" class="py-2 px-3 bg-red-100 rounded-s-lg hover:bg-red-300">
+          清除畫面
+          <button id="reset-game-btn" type="button" class="py-2 px-3 bg-red-100 hover:bg-red-300">
+            重新開始遊戲
+          </button>
+        </button>
+        <button id="get-game-info-btn" type="button" class="py-2 px-3 bg-green-100 hover:bg-green-300">
+          目前遊戲狀態
+        </button>
+        <button id="initialize-map-btn" type="button" class="py-2 px-3 bg-gray-100 hover:bg-gray-300">
+          自動填滿地圖
+        </button>
+        <button id="place-stack-btn" type="button" class="py-2 px-3 bg-gray-100 hover:bg-gray-300">
+          隨機放置方塊
+        </button>
+        <button id="split-stack-btn" type="button" class="py-2 px-3 bg-gray-100 rounded-e-lg hover:bg-gray-300">
+          隨機分配方塊
+        </button>
+      </div>
+    </div>
+    <details>
+      <summary>show game data</summary>
+      <%= render @game %>
+    </details>
     <%= link_to "Edit this game", edit_game_path(@game), class: "mt-2 rounded-lg py-3 px-5 bg-gray-100 inline-block font-medium" %>
     <%= link_to "Back to games", games_path, class: "ml-2 rounded-lg py-3 px-5 bg-gray-100 inline-block font-medium cursor-not-allowed" %>
     <%= link_to "Back to room", room_path(@game.room_id), class: "ml-2 rounded-lg py-3 px-5 bg-gray-100 inline-block font-medium" %>

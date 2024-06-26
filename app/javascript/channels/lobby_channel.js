@@ -1,4 +1,4 @@
-import consumer from "channels/consumer"
+import consumer from "channels/consumer";
 
 consumer.subscriptions.create("LobbyChannel", {
   connected() {
@@ -11,5 +11,6 @@ consumer.subscriptions.create("LobbyChannel", {
 
   received(data) {
     // Called when there's incoming data on the websocket for this channel
-  }
+    console.log(data);
+  },
 });

@@ -15,30 +15,30 @@ module Step
 
       if @game.game_phase == 'build map'
         # raise 'The map is not initialized' if @game.game_phase == 'build map'
-        errors.add(:game, 'The map is not initialized') and return
+        errors.add(:base, 'The map is not initialized') and return
       end
 
       # you can't place the stack twice in a game
       if @previous_pastures.find do |pasture|
            pasture['stack']['color'] == @destination_grid['stack']['color']
          end
-        errors.add(:destination_grid, 'The stack is already placed') and return
+        errors.add(:base, 'The stack is already placed') and return
         # raise "#{@destination_grid['stack']['color']} has already placed the stack"
       end
 
       unless @destination_grid['stack']['color']
         # raise 'destination_grid.stack.color is required'
-        errors.add(:destination_grid, 'destination_grid.stack.color is required') and return
+        errors.add(:base, 'destination_grid.stack.color is required') and return
       end
 
       target = @previous_pastures.find do |pasture|
         pasture['x'] == @destination_grid['x'] && pasture['y'] == @destination_grid['y']
       end
 
-      errors.add(:destination_grid, 'is not found') and return unless target
+      errors.add(:base, 'Pasture is not found') and return unless target
 
       # raise 'The pasture is already captured' unless target['stack']['amount'].zero?
-      errors.add(:destination_grid, 'is already captured') and return unless target['stack']['amount'].zero?
+      errors.add(:base, 'Pasture is already captured') and return unless target['stack']['amount'].zero?
 
       target['stack'] = {
         'color' => @destination_grid['stack']['color'],

@@ -17,15 +17,24 @@ module Api
       private
 
       def load_jwt_request
-        header = request.headers['Authorization']
-        return render json: { errors: 'Failed to authenticate' }, status: :unauthorized unless header
+        if (user_id = cookies.encrypted['_split_session']&.dig('user_id'))
+          @user = Visitor.find_by(id: user_id)
+          if @user
+            @jwt_request = { 'sub' => @user.id }
+          else
+            render json: { errors: 'Failed to authenticate' }, status: :unauthorized
+          end
+        else
+          header = request.headers['Authorization']
+          return render json: { errors: 'Failed to authenticate' }, status: :unauthorized unless header
 
-        decoded = header.gsub(/^Bearer /, '')
+          decoded = header.gsub(/^Bearer /, '')
 
-        begin
-          @jwt_request = Api::JsonWebToken.decode(decoded)
-        rescue JWT::DecodeError
-          render json: { errors: 'Failed to authenticate' }, status: :unauthorized
+          begin
+            @jwt_request = Api::JsonWebToken.decode(decoded)
+          rescue JWT::DecodeError
+            render json: { errors: 'Failed to authenticate' }, status: :unauthorized
+          end
         end
       end
     end

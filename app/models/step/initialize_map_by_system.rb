@@ -11,7 +11,7 @@ module Step
     end
 
     def initialize_map_by_system
-      raise 'The map is already initialized' unless @game.steps.empty?
+      errors.add(:base, 'The map is already initialized') and return unless @game.game_phase == 'build map'
 
       @game_data[:step] = @game.steps.count
       @game_data[:step_type] = 'initialize map by system'

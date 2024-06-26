@@ -3,8 +3,12 @@ module ApplicationCable
     identified_by :current_user
 
     def connect
-      self.current_user = find_verified_user
-      logger.add_tags "#{current_user.id}, #{current_user.nickname}"
+      if (user_id = cookies.encrypted['_split_session']&.dig('user_id'))
+        self.current_user = Visitor.find_by(id: user_id)
+      else
+        self.current_user = find_verified_user
+        logger.add_tags "#{current_user.id}, #{current_user.nickname}"
+      end
     end
 
     private

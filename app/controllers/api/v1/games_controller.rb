@@ -1,7 +1,9 @@
 module Api
   module V1
     class GamesController < BaseController
-      before_action :find_game, only: %i[show destroy play split]
+      before_action :find_game,
+                    only: %i[show destroy play split init_map_automatically reset_game random_place_stack
+                             random_split_stack]
       # show create destroy play split
 
       # POST /api/v1/rooms/:id/game
@@ -103,23 +105,53 @@ module Api
         render json: { game: @game }, status: :ok
       end
 
+      # development usage
+      def init_map_automatically
+        res = @game.initialize_map_by_system
+
+        return render json: { error: res.errors.full_messages }, status: :unprocessable_entity if res.errors.any?
+
+        Domain::GameInitializedEvent.new(game_id: @game.id).dispatch
+        Domain::GameTurnStartedEvent.new(game_id: @game.id).dispatch
+
+        render json: { message: 'Map initialized' }, status: :ok
+      end
+
+      def random_place_stack
+        res = @game.random_place_stack
+
+        return render json: { error: res.errors.full_messages }, status: :unprocessable_entity if res.errors.any?
+
+        Domain::GameStackPlacedEvent.new(game_id: @game.id).dispatch
+        Domain::GameTurnStartedEvent.new(game_id: @game.id).dispatch
+
+        render json: { message: 'Stack placed' }, status: :ok
+      end
+
+      def random_split_stack
+        res = @game.random_split_stack
+
+        return render json: { error: res.errors.full_messages }, status: :unprocessable_entity if res.errors.any?
+
+        Domain::GameStackSplittedEvent.new(game_id: @game.id).dispatch
+        Domain::GameTurnStartedEvent.new(game_id: @game.id).dispatch
+
+        render json: { message: 'Stack splitted' }, status: :ok
+      end
+
+      def reset_game
+        @game.reset_game
+
+        Domain::GameResetEvent.new(game_id: @game.id).dispatch
+
+        render json: { message: 'Game reset' }, status: :ok
+      end
+
       private
 
       def find_game
         @game = Game.find_by(id: params[:id])
         return render json: { error: 'Game not found' }, status: :not_found unless @game
-
-        # return render json: { error: 'Room is already closed' }, status: :unprocessable_entity if @room.closed?
-
-        # @user = Visitor.find(@jwt_request['sub'])
-        # unless room.players.include?(@user)
-        #   return render json: { error: 'You are not in this room' },
-        #                 status: :unauthorized
-        # end
-
-        # @game = room.games.last
-        # return render json: { error: 'Game is finished' }, status: :unprocessable_entity if @game&.finished?
-        # return render json: { error: 'Game not found' }, status: :not_found unless @game
 
         @game
       end

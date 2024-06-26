@@ -59,6 +59,8 @@ class Game < ApplicationRecord
   end
 
   def random_split_stack
+    # debugger
+
     current_player_color = players[current_player_index]['color']
 
     original_grid = pastures.find do |pasture|
@@ -67,7 +69,9 @@ class Game < ApplicationRecord
         !pasture['is_blocked']
     end
 
-    return unless original_grid
+    # return unless original_grid
+
+    random_amount = (original_grid.present? ? rand(1..original_grid['stack']['amount']) : 1)
 
     Step::Split.new(
       self, original_grid:, destination_grid: {
@@ -75,13 +79,13 @@ class Game < ApplicationRecord
         'y' => rand(5 + players.size),
         'stack' => {
           'color' => current_player_color,
-          'amount' => rand(1..original_grid['stack']['amount'])
+          'amount' => random_amount
         }
       }
     ).exec
   end
 
-  def game_reset
+  def reset_game
     update!(
       {
         steps: [],
@@ -90,8 +94,36 @@ class Game < ApplicationRecord
     )
   end
 
+  def game_config
+    Jbuilder.new do |json|
+      json.players_number players.size
+      json.players players do |player|
+        json.id player['id']
+        json.nickname player['nickname']
+        json.color player['color']
+        json.character player['character']
+      end
+    end.attributes!
+  end
+
+  def game_data(step: nil)
+    Jbuilder.new do |json|
+      json.step(step || steps.size)
+      json.current_player_index current_player_index
+      json.phase game_phase
+      json.pastures pastures do |pasture|
+        json.x pasture['x']
+        json.y pasture['y']
+        json.is_blocked pasture['is_blocked']
+        json.stack do
+          json.color pasture['stack']['color']
+          json.amount pasture['stack']['amount']
+        end
+      end
+    end.attributes!
+  end
+
   def initialize_map_by_system
-    # new_step 'initialize map by system'
     Step::InitializeMapBySystem.new(self).exec
   end
 

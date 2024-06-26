@@ -71,7 +71,7 @@ class Game < ApplicationRecord
 
     # return unless original_grid
 
-    random_amount = (original_grid.present? ? rand(1..original_grid['stack']['amount']) : 1)
+    random_amount = (original_grid.present? ? rand(1...original_grid['stack']['amount']) : 1)
 
     Step::Split.new(
       self, original_grid:, destination_grid: {

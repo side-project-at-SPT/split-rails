@@ -20,13 +20,8 @@ const prepareMap = ({ board, game_config }) => {
       const pasture = document.createElement("div");
       pasture.classList.add("pasture");
       pasture.id = `pasture-x-${x}-y-${y}`;
-      pasture.style = `
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        aspect-ratio: 1/1;
-        background-color: #dcfce7;
-        `;
+      pasture.dataset.x = x;
+      pasture.dataset.y = y;
       board.appendChild(pasture);
     }
     board.style.gridTemplateColumns = `repeat(${mapSize}, 1fr)`;
@@ -113,7 +108,7 @@ if (document.location.pathname.match(/\/games\/\d+/)) {
         console.log("Received data from GameChannel");
         console.log(data);
 
-        const { event, game_config, game_data } = data;
+        const { event, game_config, game_data, game_id } = data;
         switch (event) {
           case "game_reset":
             // alert("Game has been reset");
@@ -141,6 +136,22 @@ if (document.location.pathname.match(/\/games\/\d+/)) {
           case "turn_started":
             writeMessage("Turn started");
             queryCurrentPlayer();
+            break;
+
+          case "game_over":
+            writeMessage("Game over");
+            break;
+
+          case "game_created":
+            const url = new URL(`/games/${game_id}`, document.location.origin);
+            if (confirm("Game has been created. Do you want to join?")) {
+              alert(`You are going to join game ${game_id}`);
+              // redirect to the game page
+              document.location.href = url;
+            } else {
+              writeMessage("You can join the game later");
+              writeMessage(`url: ${url}`);
+            }
             break;
 
           default:
@@ -188,13 +199,6 @@ document
   });
 
 const renderPastures = (pastures) => {
-  const colors = {
-    red: "#fb7185", // rose-400
-    green: "#16a34a", // green-600
-    blue: "#60a5fa", // blue-400
-    yellow: "#eab308", // yellow-500
-    blank: "#dcfce7", // green-100
-  };
   if (pastures?.length > 0) {
     // - pastures: array
     //     - element: hash
@@ -208,7 +212,7 @@ const renderPastures = (pastures) => {
       const pastureDiv = document.getElementById(
         `pasture-x-${pasture.x}-y-${pasture.y}`
       );
-      pastureDiv.style.backgroundColor = colors[pasture.stack.color];
+      pastureDiv.classList.add(pasture.stack.color);
       pastureDiv.textContent = pasture.stack.amount;
     });
   } else {
@@ -241,6 +245,19 @@ const queryCurrentPlayer = async () => {
   });
 };
 
+const toggleGameGridStyle = () => {
+  const pastures = document.querySelectorAll(".pasture");
+  pastures.forEach((pasture) => {
+    pasture.classList.toggle("hex");
+  });
+  // alert("Grid style has been toggled"); // <alert>Grid style has been toggled
+  // console.log(pastures[0]);
+};
+
 document
   .getElementById("get-game-info-btn")
   .addEventListener("click", updateGameInfo);
+
+document
+  .getElementById("toggle-game-grid-style-btn")
+  .addEventListener("click", toggleGameGridStyle);

@@ -91,14 +91,13 @@ class Game < ApplicationRecord
     ).exec
   end
 
-  def reset_game
-    update!(
-      {
-        steps: [],
-        current_player_index: calculate_current_player_index
-      }
-    )
-  end
+  # def reset_game
+  #   # finish current game and create new game
+  #   update!(is_finished: true)
+
+  #   # create new game
+  #   room.start_new_game
+  # end
 
   def game_config
     Jbuilder.new do |json|

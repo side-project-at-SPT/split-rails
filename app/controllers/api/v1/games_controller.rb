@@ -140,9 +140,13 @@ module Api
       end
 
       def reset_game
-        @game.reset_game
+        @game.close
+        Domain::GameEndEvent.new(game_id: @game.id).dispatch
 
-        Domain::GameResetEvent.new(game_id: @game.id).dispatch
+        room = @game.room
+
+        new_game_id = room.start_new_game.id
+        Domain::GameCreatedEvent.new(game_id: @game.id, new_game_id:).dispatch
 
         render json: { message: 'Game reset' }, status: :ok
       end

@@ -6,7 +6,7 @@
     <div class="w-full flex flex-col aspect-square outline p-3">
       <div id="game-map" class="h-fit grid outline outline-amber-300"></div>
       <div id="game-console" class="p-3 grow h-40 flex flex-col justify-end outline-blue-300 outline overflow-hidden"></div>
-      <div class="btn-group h-[15%]  mt-5 flex justify-center">
+      <div class="btn-group h-[12%]  mt-5 flex justify-center">
         <button id="clear-console-btn" type="button" class="py-2 px-3 bg-red-100 rounded-s-lg hover:bg-red-300">
           清除畫面
           <button id="reset-game-btn" type="button" class="py-2 px-3 bg-red-100 hover:bg-red-300">
@@ -15,6 +15,9 @@
         </button>
         <button id="get-game-info-btn" type="button" class="py-2 px-3 bg-green-100 hover:bg-green-300">
           目前遊戲狀態
+        </button>
+        <button id="toggle-game-grid-style-btn" type="button" class="py-2 px-3 bg-amber-100 hover:bg-amber-300">
+          切換形狀
         </button>
         <button id="initialize-map-btn" type="button" class="py-2 px-3 bg-gray-100 hover:bg-gray-300">
           自動填滿地圖
@@ -39,3 +42,46 @@
     </div>
   </div>
 </div>
+<style scoped>
+  :root {
+    --grid-row-count: 7;
+  }
+
+  .pasture.hex {
+    clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
+    overflow: hidden;
+  }
+
+  #game-map {
+    > .pasture.hex[data-y="0"] { --grid-row-offset: calc(var(--grid-row-count)); }
+    > .pasture.hex[data-y="1"] { --grid-row-offset: calc(var(--grid-row-count) - 1); }
+    > .pasture.hex[data-y="2"] { --grid-row-offset: calc(var(--grid-row-count) - 2); }
+    > .pasture.hex[data-y="3"] { --grid-row-offset: calc(var(--grid-row-count) - 3); }
+    > .pasture.hex[data-y="4"] { --grid-row-offset: calc(var(--grid-row-count) - 4); }
+    > .pasture.hex[data-y="5"] { --grid-row-offset: calc(var(--grid-row-count) - 5); }
+    > .pasture.hex[data-y="6"] { --grid-row-offset: calc(var(--grid-row-count) - 6); }
+  }
+
+  #game-map > .pasture.hex {
+    /* background-color: #16a34a; */
+    /* transform: translateX(calc(50% * var(--grid-row-offset))), translateY( 10%); */
+    transform: translate(calc(50% * var(--grid-row-offset)), calc(25% * var(--grid-row-offset)));
+  }
+
+  #game-map:has(.pasture.hex) {
+    transform: translate(-25%, -25%);
+  }
+
+  .pasture.blank { background-color: #dcfce7; }
+  .pasture.red { background-color: #fb7185; }
+  .pasture.green { background-color: #16a34a; }
+  .pasture.blue { background-color: #60a5fa; }
+  .pasture.yellow { background-color: #eab308; }
+
+  .pasture {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    aspect-ratio: 1/1;
+  }
+</style>

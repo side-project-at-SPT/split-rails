@@ -18,7 +18,7 @@ Rails.application.routes.draw do
           post 'game/play-unit', to: 'games#play'
         end
       end
-      resources :games, only: %i[show] do
+      resources :games, only: %i[show destroy] do
         member do
           post 'init-map-automatically', to: 'games#init_map_automatically'
           post 'reset-game', to: 'games#reset_game'

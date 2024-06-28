@@ -1,6 +1,12 @@
 class Game < ApplicationRecord
   belongs_to :room
 
+  FLAG_AUTO_GENERATE_MAP_BY_SYSTEM = true
+
+  def should_initialize_map_by_system?
+    FLAG_AUTO_GENERATE_MAP_BY_SYSTEM
+  end
+
   def current_player
     players[current_player_index]
   end

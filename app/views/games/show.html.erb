@@ -53,23 +53,29 @@
   }
 
   #game-map {
-    > .pasture.hex[data-y="0"] { --grid-row-offset: calc(var(--grid-row-count)); }
+    > .pasture.hex[data-y="0"] { --grid-row-offset: 0; }
+    > .pasture.hex[data-y="1"] { --grid-row-offset: 1; }
+    > .pasture.hex[data-y="2"] { --grid-row-offset: 2; }
+    > .pasture.hex[data-y="3"] { --grid-row-offset: 3; }
+    > .pasture.hex[data-y="4"] { --grid-row-offset: 4; }
+    > .pasture.hex[data-y="5"] { --grid-row-offset: 5; }
+    > .pasture.hex[data-y="6"] { --grid-row-offset: 6; }
+    /* > .pasture.hex[data-y="0"] { --grid-row-offset: calc(var(--grid-row-count)); }
     > .pasture.hex[data-y="1"] { --grid-row-offset: calc(var(--grid-row-count) - 1); }
     > .pasture.hex[data-y="2"] { --grid-row-offset: calc(var(--grid-row-count) - 2); }
     > .pasture.hex[data-y="3"] { --grid-row-offset: calc(var(--grid-row-count) - 3); }
     > .pasture.hex[data-y="4"] { --grid-row-offset: calc(var(--grid-row-count) - 4); }
     > .pasture.hex[data-y="5"] { --grid-row-offset: calc(var(--grid-row-count) - 5); }
-    > .pasture.hex[data-y="6"] { --grid-row-offset: calc(var(--grid-row-count) - 6); }
+    > .pasture.hex[data-y="6"] { --grid-row-offset: calc(var(--grid-row-count) - 6); } */
   }
 
   #game-map > .pasture.hex {
-    /* background-color: #16a34a; */
-    /* transform: translateX(calc(50% * var(--grid-row-offset))), translateY( 10%); */
-    transform: translate(calc(50% * var(--grid-row-offset)), calc(25% * var(--grid-row-offset)));
+    /* transform: translate(calc(50% * var(--grid-row-offset)), calc(25% * var(--grid-row-offset))); */
+    transform: translate(calc(50% * var(--grid-row-offset)), calc(25% * (calc(7 - var(--grid-row-offset)))));
   }
 
   #game-map:has(.pasture.hex) {
-    transform: translate(-25%, -25%);
+    transform: translate(-12.5%, -12.5%) scale(1.5);
   }
 
   .pasture.blank { background-color: #dcfce7; }
@@ -83,5 +89,16 @@
     justify-content: center;
     align-items: center;
     aspect-ratio: 1/1;
+    position: relative;
+
+    &::after {
+      content: "(" attr(data-x) " , " attr(data-y) ")";
+      position: absolute;
+      transform: translateY(20px);
+      /* bottom: 0; */
+      /* right: 0; */
+      font-size: 0.7rem;
+      color: #000;
+    }
   }
 </style>

@@ -17,8 +17,13 @@ module Step
       @game_data[:step_type] = 'initialize map by system'
       @game_data[:current_player_index] = @game.current_player_index
       player_size = @game.players.size
-      full_map = (player_size + 5).times.map do |i|
-        (player_size + 5).times.map do |j|
+      # 2: 32 -> 6 * 6
+      # 3: 48 -> 7 * 7
+      # 4: 64 -> 8 * 8
+      offset = player_size + 4
+
+      full_map = (offset).times.map do |i|
+        (offset).times.map do |j|
           { x: i, y: j, is_blocked: false, stack: { color: 'blank', amount: 0 } }
         end
       end.flatten

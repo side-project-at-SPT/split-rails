@@ -5,4 +5,8 @@ class VisitorsRoom < ApplicationRecord
   def ready!
     update!(ready: true)
   end
+
+  def unready!
+    update!(ready: false)
+  end
 end

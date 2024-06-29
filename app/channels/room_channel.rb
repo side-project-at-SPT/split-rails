@@ -3,6 +3,8 @@ class RoomChannel < ApplicationCable::Channel
     room = Room.find_by(id: params[:room_id])
 
     if room.nil?
+      stream_for "room_not_found_#{params[:room_id]}"
+      return
       reject
       return
     end
@@ -15,8 +17,41 @@ class RoomChannel < ApplicationCable::Channel
     # Any cleanup needed when channel is unsubscribed
     room = Room.find_by(id: params[:room_id])
 
+    if room.nil?
+      Rails.logger.debug('Room not found')
+      return
+    end
+
     room_leave_with(room, current_user)
     # stop_all_streams
+  end
+
+  def cancel_ready
+    room = Room.find_by(id: params[:room_id])
+
+    reject and return if room.nil?
+    reject and return if room.players.exclude?(current_user)
+
+    current_user.unready!
+
+    broadcast_to(
+      room,
+      {
+        event: 'cancel_ready',
+        player: {
+          id: current_user.id,
+          nickname: current_user.nickname,
+          character: current_user.character,
+          is_ready: current_user.ready?
+        }
+      }
+    )
+
+    return unless room.start_in_seconds?
+
+    # interrupt_start_game
+    key = "room_#{room.id}:start_game_interrupted"
+    $redis.set(key, true)
   end
 
   def ready

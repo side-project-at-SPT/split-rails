@@ -41,6 +41,10 @@ class Visitor < ApplicationRecord
     visitors_room&.ready!
   end
 
+  def unready!
+    visitors_room&.unready!
+  end
+
   def character
     visitors_room&.character
   end

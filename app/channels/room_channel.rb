@@ -3,8 +3,6 @@ class RoomChannel < ApplicationCable::Channel
     room = Room.find_by(id: params[:room_id])
 
     if room.nil?
-      stream_for "room_not_found_#{params[:room_id]}"
-      return
       reject
       return
     end
@@ -24,6 +22,31 @@ class RoomChannel < ApplicationCable::Channel
 
     room_leave_with(room, current_user)
     # stop_all_streams
+  end
+
+  def set_character(data)
+    room = Room.find_by(id: params[:room_id])
+
+    reject and return if room.nil?
+    reject and return if room.players.exclude?(current_user)
+
+    character = data['character']
+
+    Rails.logger.debug { "Character: #{character}" }
+
+    current_user.character = character
+    current_user.save
+
+    players = room.players.map do |player|
+      {
+        player_id: player.id,
+        nickname: player.nickname,
+        character: player.character,
+        is_ready: player.ready?
+      }
+    end
+
+    broadcast_to(room, { event: 'set_character', players: })
   end
 
   def cancel_ready

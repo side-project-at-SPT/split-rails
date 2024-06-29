@@ -49,5 +49,9 @@ class Visitor < ApplicationRecord
     visitors_room&.character
   end
 
+  def character=(value)
+    visitors_room&.update(character: value)
+  end
+
   delegate :id, :name, to: :room, prefix: true, allow_nil: true
 end

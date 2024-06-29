@@ -46,7 +46,7 @@ class Room < ApplicationRecord
     save!
   end
 
-  def start_in_seconds?
+  def ready_to_start?
     players = self.players.reload
     Rails.logger.warn { "status: #{status}, players: #{players.size}, all ready: #{players.all?(&:ready?)}" }
     if status == 'waiting' && players.size >= 2 && players.all?(&:ready?)

@@ -47,9 +47,10 @@ class RoomChannel < ApplicationCable::Channel
       }
     )
 
-    return unless room.start_in_seconds?
+    # there is game starting
+    return unless room.start_in_seconds.positive?
 
-    # interrupt_start_game
+    # interrupt starting game
     key = "room_#{room.id}:start_game_interrupted"
     $redis.set(key, true)
   end
@@ -60,7 +61,7 @@ class RoomChannel < ApplicationCable::Channel
     reject and return if room.nil?
     reject and return if room.players.exclude?(current_user)
 
-    current_user.ready!
+    current_user.reload.ready!
     # current_user.reload
     # room = current_user.room.reload
     broadcast_to(
@@ -76,7 +77,7 @@ class RoomChannel < ApplicationCable::Channel
       }
     )
 
-    return unless room.start_in_seconds?
+    return unless room.ready_to_start?
 
     dispatch_to_lobby('game_is_starting', room)
 
@@ -99,6 +100,8 @@ class RoomChannel < ApplicationCable::Channel
     return unless game&.on_going?
 
     game.close
+    game.room.players.each { |player| player.reload.unready! }
+
     broadcast_to(room, { event: 'game_closed' })
     Rails.logger.debug("Game Status: #{room.status}")
     dispatch_to_lobby('game_closed', room)
@@ -143,6 +146,7 @@ class RoomChannel < ApplicationCable::Channel
     return false unless $redis.get(key)
 
     $redis.del(key)
+    $redis.del("room_#{room.id}:game_start_in_seconds")
 
     broadcast_to(room, { event: 'starting_game_is_cancelled' })
   end

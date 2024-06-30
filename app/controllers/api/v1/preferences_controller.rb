@@ -21,7 +21,7 @@ module Api
         if @user.save
           # Broadcast to lobby_channel
           message = {
-            event: 'user preferences updated',
+            event: 'user_preferences_updated',
             user_id: @user.id,
             preferences: @user.read_preferences
           }

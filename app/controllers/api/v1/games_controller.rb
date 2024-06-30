@@ -118,6 +118,24 @@ module Api
         render json: { message: 'Stack placed' }, status: :ok
       end
 
+      # POST /api/v1/games/:id/split-stack
+      def split_stack
+        res = @game.split_stack(
+          origin_x: params[:origin_x].to_i,
+          origin_y: params[:origin_y].to_i,
+          target_x: params[:target_x].to_i,
+          target_y: params[:target_y].to_i,
+          amount: params[:amount].to_i
+        )
+
+        return render json: { error: res.errors.full_messages }, status: :unprocessable_entity if res.errors.any?
+
+        Domain::GameStackSplittedEvent.new(game_id: @game.id).dispatch
+        Domain::GameTurnStartedEvent.new(game_id: @game.id).dispatch
+
+        render json: { message: 'Stack splitted' }, status: :ok
+      end
+
       # development usage
       def init_map_automatically
         res = @game.initialize_map_by_system

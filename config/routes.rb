@@ -27,6 +27,7 @@ Rails.application.routes.draw do
           post 'place-stack', to: 'games#place_stack'
 
           post 'split-stack-automatically', to: 'games#random_split_stack'
+          post 'split-stack', to: 'games#split_stack'
         end
       end
     end

@@ -125,7 +125,7 @@ module Api
           origin_y: params[:origin_y].to_i,
           target_x: params[:target_x].to_i,
           target_y: params[:target_y].to_i,
-          amount: params[:amount].to_i
+          target_amount: params[:target_amount].to_i
         )
 
         return render json: { error: res.errors.full_messages }, status: :unprocessable_entity if res.errors.any?

@@ -64,6 +64,20 @@ class Game < ApplicationRecord
     ).exec
   end
 
+  def place_stack(target_x:, target_y:)
+    current_player_color = players[current_player_index]['color']
+
+    Step::Play.new(
+      self, destination_grid: {
+        'x' => target_x,
+        'y' => target_y,
+        'stack' => {
+          'color' => current_player_color
+        }
+      }
+    ).exec
+  end
+
   def random_split_stack
     # debugger
 

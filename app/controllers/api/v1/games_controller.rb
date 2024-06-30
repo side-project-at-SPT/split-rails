@@ -2,7 +2,8 @@ module Api
   module V1
     class GamesController < BaseController
       before_action :find_game,
-                    only: %i[show destroy play split init_map_automatically reset_game random_place_stack
+                    only: %i[show destroy play split init_map_automatically reset_game
+                             place_stack random_place_stack
                              random_split_stack]
       # show create destroy play split
 
@@ -103,6 +104,18 @@ module Api
         @game.save!
 
         render json: { game: @game }, status: :ok
+      end
+
+      # POST /api/v1/games/:id/place-stack
+      def place_stack
+        res = @game.place_stack(target_x: params[:target_x].to_i, target_y: params[:target_y].to_i)
+
+        return render json: { error: res.errors.full_messages }, status: :unprocessable_entity if res.errors.any?
+
+        Domain::GameStackPlacedEvent.new(game_id: @game.id).dispatch
+        Domain::GameTurnStartedEvent.new(game_id: @game.id).dispatch
+
+        render json: { message: 'Stack placed' }, status: :ok
       end
 
       # development usage

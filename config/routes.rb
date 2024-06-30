@@ -22,7 +22,10 @@ Rails.application.routes.draw do
         member do
           post 'init-map-automatically', to: 'games#init_map_automatically'
           post 'reset-game', to: 'games#reset_game'
+
           post 'place-stack-automatically', to: 'games#random_place_stack'
+          post 'place-stack', to: 'games#place_stack'
+
           post 'split-stack-automatically', to: 'games#random_split_stack'
         end
       end

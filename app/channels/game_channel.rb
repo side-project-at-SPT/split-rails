@@ -19,6 +19,24 @@ class GameChannel < ApplicationCable::Channel
   end
 
   def place_stack(data)
+    # to ensure the game is up-to-date
+    @game.reload
+
+    # if is not the player's turn
+    unless @game.current_player['id'] == current_user.id
+      Rails.logger.warn { 'Not your turn' }
+      Rails.logger.warn { "Current player: #{current_user.id}" }
+      Rails.logger.warn { "Your id: #{current_user.id}" }
+      return
+    end
+
+    required_params = %w[x y]
+    lacking_params = required_params.reject { |param| data.key?(param) }
+    if lacking_params.any?
+      Rails.logger.warn { "Missing required params: #{lacking_params.join(', ')}" }
+      return
+    end
+
     res = @game.place_stack(target_x: data['x'].to_i, target_y: data['y'].to_i)
 
     if res.errors.any?
@@ -31,6 +49,9 @@ class GameChannel < ApplicationCable::Channel
   end
 
   def split_stack(data)
+    # to ensure the game is up-to-date
+    @game.reload
+
     # if is not the player's turn
     unless @game.current_player['id'] == current_user.id
       Rails.logger.warn { 'Not your turn' }
@@ -65,14 +86,6 @@ class GameChannel < ApplicationCable::Channel
   end
 
   private
-
-  # def current_game_state
-  #   {
-  #     id: @game.id,
-  #     players: player_state,
-  #     steps: @game.steps
-  #   }
-  # end
 
   def player_joined_game(game_id, player_id)
     key = "game_#{game_id}:#{player_id}:connected"

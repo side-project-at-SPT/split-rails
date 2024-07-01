@@ -19,7 +19,7 @@ module Step
       end
 
       # you can't place the stack twice in a game
-      if @previous_pastures.find do |pasture|
+      if @previous_pastures.any? do |pasture|
            pasture['stack']['color'] == @destination_grid['stack']['color']
          end
         errors.add(:base, 'The stack is already placed') and return

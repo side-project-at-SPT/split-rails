@@ -125,7 +125,10 @@ class Game < ApplicationRecord
       errors.add(:base, 'You can only split your own stack') and return self
     end
 
-    errors.add(:base, 'You can only split a stack in a non-blocked pasture') and return self if original_grid['is_blocked']
+    if original_grid['is_blocked']
+      errors.add(:base,
+                 'You can only split a stack in a non-blocked pasture') and return self
+    end
 
     if original_grid['stack']['amount'] <= 1
       errors.add(:base, 'You can only split a stack with more than 1 sheep') and return self

@@ -73,6 +73,17 @@ RSpec.describe Step, type: :model do
       expect(
         Game.find(game.id).pastures.count { |pasture| pasture['stack']['amount'].positive? }
       ).to eq(3)
+
+      # After split, the sum of the stack amount should be the same
+      expect(
+        Game
+          .find(game.id)
+          .pastures
+          .group_by { |pasture| pasture['stack']['color'] }
+          .select { |k, v| v.size > 1 && k != 'blank' }
+          .values[0]
+          .sum(0) { |v| v['stack']['amount'].to_i }
+      ).to eq(16)
       expect(Game.find(game.id).game_phase).to eq('split_stack')
     end
   end

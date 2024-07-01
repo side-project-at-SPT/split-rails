@@ -13,24 +13,31 @@ module Step
     def split_stack
       errors.add(:base, 'The map is not initialized') and return if @game.game_phase == 'build map'
 
+      original_grid = @previous_pastures.find do |pasture|
+        pasture['x'] == @original_grid['x'] && pasture['y'] == @original_grid['y']
+      end
+
+      # the original grid should be exist
+      unless original_grid
+        errors.add(:base, 'The original pasture is not found') and return
+      end
+
       # you can only split your own stack
-      unless @original_grid['stack']['color'] == @game.players[@game.current_player_index]['color']
-        # raise 'You can only split your own stack'
+      unless original_grid['stack']['color'] == @game.players[@game.current_player_index]['color']
         errors.add(:base, 'You can only split your own stack') and return
       end
 
       # you can only split a stack in a non-blocked pasture
-      unless @original_grid['is_blocked'] == false
-        # raise 'You can only split a stack in a non-blocked pasture'
+      unless original_grid['is_blocked'] == false
         errors.add(:base, 'You can only split a stack in a non-blocked pasture') and return
       end
 
       # you can only split a stack with more than 1 sheep
-      unless @original_grid['stack']['amount'] > 1
-        # raise 'You can only split a stack with more than 1 sheep'
+      unless original_grid['stack']['amount'] > 1
         errors.add(:base, 'You can only split a stack with more than 1 sheep') and return
       end
 
+      # TODO: implement continuous_path?
       # the path between the original grid and the destination grid should be continuous
       unless continuous_path?
         # raise 'The path between the original grid and the destination grid should be continuous' unless continuous_path?
@@ -45,7 +52,7 @@ module Step
       # the destination grid should be exist
       unless target
         # raise 'The pasture is not found' unless target
-        errors.add(:base, 'The pasture is not found') and return
+        errors.add(:base, 'The destination pasture is not found') and return
       end
 
       # the destination grid should be empty
@@ -55,20 +62,21 @@ module Step
       end
 
       # at least one sheep should be left in the original grid
-      unless (@original_grid['stack']['amount'] - @destination_grid['stack']['amount']).positive?
+      unless (original_grid['stack']['amount'] - @destination_grid['stack']['amount']).positive?
         # raise 'At least one sheep should be left in the original grid'
         errors.add(:base, 'At least one sheep should be left in the original grid') and return
       end
 
       # split the stack
 
-      @original_grid['stack']['amount'] -= @destination_grid['stack']['amount']
-
       target['stack'] = {
         'color' => @destination_grid['stack']['color'],
         'amount' => @destination_grid['stack']['amount']
       }
+
       target['is_blocked'] = check_blocked?(target, @previous_pastures)
+
+      original_grid['stack']['amount'] -= target['stack']['amount']
 
       # write to game_data
 

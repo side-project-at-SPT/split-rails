@@ -86,11 +86,11 @@ class Game < ApplicationRecord
   def random_split_stack
     current_player_color = players[current_player_index]['color']
 
-    original_grid = pastures.find do |pasture|
+    original_grid = pastures.select do |pasture|
       (pasture['stack']['color'] == current_player_color) &&
-        pasture['stack']['amount'].positive? &&
+        pasture['stack']['amount'] > 1 &&
         !pasture['is_blocked']
-    end
+    end.sample
 
     # return unless original_grid
 
@@ -171,8 +171,11 @@ class Game < ApplicationRecord
   end
 
   def game_data(step: nil)
+    last_step = step ? steps.find_by(step_number: step) : steps.last
+    return {} if last_step.nil?
+
     Jbuilder.new do |json|
-      json.step(step || steps.size)
+      json.step last_step.step_number
       json.current_player_index current_player_index
       json.phase game_phase
       json.pastures pastures do |pasture|

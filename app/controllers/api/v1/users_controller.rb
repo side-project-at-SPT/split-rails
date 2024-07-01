@@ -18,14 +18,13 @@ module Api
         name = params.fetch(:name)
         password = params.fetch(:password)
 
-        unless password.is_a?(String) && password.length >= 6
-          return render json: { error: 'Password must be a string with at least 6 characters' },
-                        status: :bad_request
-        end
-
         user = Visitor.find_or_initialize_by(name:)
 
         if user.new_record?
+          unless password.is_a?(String) && password.length >= 6
+            return render json: { error: 'Password must be a string with at least 6 characters' },
+                          status: :bad_request
+          end
           user.password = password
           user.save!
 

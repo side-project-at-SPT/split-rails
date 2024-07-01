@@ -17,7 +17,8 @@ module Domain
           game, {
             event: event_type,
             game_config: game.game_config,
-            game_data: game.game_data
+            game_data: game.game_data,
+            action: game.action
           }
         )
       end

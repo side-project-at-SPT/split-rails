@@ -193,6 +193,12 @@ class Game < ApplicationRecord
     end.attributes!
   end
 
+  def action
+    return {} if steps.empty?
+
+    steps.last.action
+  end
+
   def initialize_map_by_system
     Step::InitializeMapBySystem.new(self).exec
   end

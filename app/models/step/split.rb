@@ -11,6 +11,27 @@ module Step
     end
 
     def split_stack
+      @game_data.action = {
+        author: @game.players[@game.current_player_index]['color'],
+        action_name: 'split_stack',
+        to_grid: {
+          x: @destination_grid['x'],
+          y: @destination_grid['y'],
+          stack: {
+            color: @destination_grid['stack']['color'],
+            amount: @destination_grid['stack']['amount']
+          }
+        },
+        from_grid: {
+          x: @original_grid['x'],
+          y: @original_grid['y'],
+          stack: {
+            color: @original_grid['stack']['color'],
+            amount: @original_grid['stack']['amount']
+          }
+        }
+      }
+
       errors.add(:base, 'The map is not initialized') and return if @game.game_phase == 'build map'
 
       original_grid = @previous_pastures.find do |pasture|
@@ -18,9 +39,7 @@ module Step
       end
 
       # the original grid should be exist
-      unless original_grid
-        errors.add(:base, 'The original pasture is not found') and return
-      end
+      errors.add(:base, 'The original pasture is not found') and return unless original_grid
 
       # you can only split your own stack
       unless original_grid['stack']['color'] == @game.players[@game.current_player_index]['color']

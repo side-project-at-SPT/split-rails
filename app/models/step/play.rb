@@ -11,6 +11,18 @@ module Step
     end
 
     def place_stack
+      @game_data.action = {
+        author: @game.players[@game.current_player_index]['color'],
+        action_name: 'place_stack',
+        to_grid: {
+          x: @destination_grid['x'],
+          y: @destination_grid['y'],
+          stack: {
+            color: @destination_grid['stack']['color'],
+            amount: SHEEP_INITIAL_QUANTITY
+          }
+        }
+      }
       # rewrite following raise conditions to use errors.add
 
       if @game.game_phase == 'build map'

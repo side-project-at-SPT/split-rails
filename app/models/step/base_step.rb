@@ -19,7 +19,6 @@ module Step
       @game = game
       @step_type = step_type
       @game_data = GameStep.new(game:, step_type:)
-      # @previous_game_data = game.steps.empty? ? {} : game.steps.last
       @previous_pastures = game.pastures
       @original_grid = original_grid
       @destination_grid = destination_grid

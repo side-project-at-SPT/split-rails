@@ -110,7 +110,7 @@ if (document.location.pathname.match(/\/games\/\d+/)) {
         console.log("Received data from GameChannel");
         console.log(data);
 
-        const { event, game_config, game_data, game_id } = data;
+        const { event, game_config, game_data, game_id, action } = data;
         switch (event) {
           case "game_reset":
             // alert("Game has been reset");
@@ -127,11 +127,13 @@ if (document.location.pathname.match(/\/games\/\d+/)) {
 
           case "stack_placed":
             writeMessage("Stack placed");
+            playActionByAlert(action);
             renderGame({ game_config, game_data });
             break;
 
           case "stack_splitted":
             writeMessage("Stack split");
+            playActionByAlert(action);
             renderGame({ game_config, game_data });
             break;
 
@@ -232,6 +234,24 @@ const renderPastures = (pastures) => {
   } else {
     writeMessage("No pastures found");
     return;
+  }
+};
+
+const playActionByAlert = ({ author, action_name, to_grid, from_grid }) => {
+  switch (action_name) {
+    case "place_stack":
+      alert(
+        `${author} is going to ${action_name} to (${to_grid.x}, ${to_grid.y})`
+      );
+      break;
+    case "split_stack":
+      alert(
+        `${author} is going to ${action_name} (${to_grid.stack.amount} tiles) from (${from_grid.x}, ${from_grid.y}) to (${to_grid.x}, ${to_grid.y})`
+      );
+      break;
+
+    default:
+      break;
   }
 };
 

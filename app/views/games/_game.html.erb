@@ -11,7 +11,7 @@
     <strong class="block font-medium mb-1">Players:</strong>
     <% game.players.each do |player| %>
       <div class="list-item ml-5  marker:text-<%= player["color"] %>-500 text-3xl">
-        <%= player["name"] %> - <%= player["color"] %>
+        <%= player["name"] %> - <%= player["color"] %> (#<%= player["id"] %>)
       </div>
     <% end %>
   </p>
@@ -19,12 +19,12 @@
     <strong class="block font-medium mb-1">Current player:</strong>
     <% game.current_player.tap do |player| %>
       <div class="list-item ml-5  marker:text-<%= player["color"] %>-500 text-3xl">
-        <%= player["name"] %> - <%= player["color"] %>
+        <%= player["name"] %> - <%= player["color"] %> (#<%= player["id"] %>)
       </div>
     <% end %>
   </p>
   <p class="my-5">
-    <strong class="block font-medium mb-1">Steps:</strong>
-    <%= game.steps %>
+    <strong class="block font-medium mb-1">Current user:</strong>
+    <%= current_user.id %>
   </p>
 </div>

@@ -109,32 +109,32 @@ class Game < ApplicationRecord
   end
 
   def split_stack(
-    original_x:, original_y:,
+    origin_x:, origin_y:,
     target_x:, target_y:,
     target_amount:
   )
     current_player_color = players[current_player_index]['color']
 
     original_grid = pastures.find do |pasture|
-      (pasture['x'] == original_x) && (pasture['y'] == original_y)
+      (pasture['x'] == origin_x) && (pasture['y'] == origin_y)
     end
 
-    errors.add(:base, 'The pasture is not found') and return if original_grid.nil?
+    errors.add(:base, 'The pasture is not found') and return self if original_grid.nil?
 
     if original_grid['stack']['color'] != current_player_color
-      errors.add(:base, 'You can only split your own stack') and return
+      errors.add(:base, 'You can only split your own stack') and return self
     end
 
-    errors.add(:base, 'You can only split a stack in a non-blocked pasture') and return if original_grid['is_blocked']
+    errors.add(:base, 'You can only split a stack in a non-blocked pasture') and return self if original_grid['is_blocked']
 
     if original_grid['stack']['amount'] <= 1
-      errors.add(:base, 'You can only split a stack with more than 1 sheep') and return
+      errors.add(:base, 'You can only split a stack with more than 1 sheep') and return self
     end
 
-    # the path between the original grid and the destination grid should be continuous
-    unless continuous_path?(original_x, original_y, target_x, target_y)
-      errors.add(:base, 'The path between the original grid and the destination grid should be continuous') and return
-    end
+    # # the path between the original grid and the destination grid should be continuous
+    # unless continuous_path?(origin_x, origin_y, target_x, target_y)
+    #   errors.add(:base, 'The path between the original grid and the destination grid should be continuous') and return self
+    # end
 
     Step::Split.new(
       self,

@@ -14,7 +14,7 @@ const writeError = (error) => {
 };
 const prepareMap = ({ board, game_config }) => {
   board.innerHTML = "";
-  const mapSize = game_config.players_number + 5;
+  const mapSize = game_config.players_number + 4;
   for (let y = 0; y < mapSize; y++) {
     for (let x = 0; x < mapSize; x++) {
       const pasture = document.createElement("div");
@@ -81,8 +81,10 @@ const commandSplitStackAutomatically = async () => {
   }
 };
 
+let GameChannel;
+
 if (document.location.pathname.match(/\/games\/\d+/)) {
-  consumer.subscriptions.create(
+  GameChannel = consumer.subscriptions.create(
     {
       channel: "GameChannel",
       game_id: document.location.pathname.match(/\/games\/(\d+)/)[1],
@@ -157,6 +159,18 @@ if (document.location.pathname.match(/\/games\/\d+/)) {
           default:
             break;
         }
+      },
+
+      echo(data) {
+        this.perform("echo", data);
+      },
+
+      placeStack(stack) {
+        this.perform("place_stack", stack);
+      },
+
+      splitStack(step) {
+        this.perform("split_stack", step);
       },
     }
   );
@@ -261,3 +275,64 @@ document
 document
   .getElementById("toggle-game-grid-style-btn")
   .addEventListener("click", toggleGameGridStyle);
+
+document.getElementById("ws-echo-btn").addEventListener("click", () => {
+  GameChannel.echo({ message: "Hello from client" });
+});
+
+const placeStackByWebSocket = () => {
+  const x = parseInt(prompt("Enter x:"));
+  if (isNaN(x)) {
+    alert("Invalid input");
+    return;
+  }
+  const y = parseInt(prompt("Enter y:"));
+  if (isNaN(y)) {
+    alert("Invalid input");
+    return;
+  }
+  GameChannel.placeStack({ x, y });
+};
+
+document
+  .getElementById("ws-place-stack-btn")
+  .addEventListener("click", placeStackByWebSocket);
+
+const splitStackByWebSocket = () => {
+  const originX = parseInt(prompt("Enter origin x:"));
+  if (isNaN(originX)) {
+    alert("Invalid input");
+    return;
+  }
+  const originY = parseInt(prompt("Enter origin y:"));
+  if (isNaN(originY)) {
+    alert("Invalid input");
+    return;
+  }
+  const targetX = parseInt(prompt("Enter target x:"));
+  if (isNaN(targetX)) {
+    alert("Invalid input");
+    return;
+  }
+  const targetY = parseInt(prompt("Enter target y:"));
+  if (isNaN(targetY)) {
+    alert("Invalid input");
+    return;
+  }
+  const target_amount = parseInt(prompt("Enter target amount:"));
+  if (isNaN(target_amount)) {
+    alert("Invalid input");
+    return;
+  }
+  GameChannel.splitStack({
+    origin_x: originX,
+    origin_y: originY,
+    target_x: targetX,
+    target_y: targetY,
+    target_amount,
+  });
+};
+
+document
+  .getElementById("ws-split-stack-btn")
+  .addEventListener("click", splitStackByWebSocket);

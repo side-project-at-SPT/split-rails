@@ -19,6 +19,15 @@
         <button id="toggle-game-grid-style-btn" type="button" class="py-2 px-3 bg-amber-100 hover:bg-amber-300">
           切換形狀
         </button>
+        <button id="ws-echo-btn" type="button" class="py-2 px-3 bg-amber-100 hover:bg-amber-300">
+          Echo
+        </button>
+        <button id="ws-place-stack-btn" type="button" class="py-2 px-3 bg-amber-100 hover:bg-amber-300">
+          放置方塊
+        </button>
+        <button id="ws-split-stack-btn" type="button" class="py-2 px-3 bg-amber-100 hover:bg-amber-300">
+          分配方塊
+        </button>
         <button id="initialize-map-btn" type="button" class="py-2 px-3 bg-gray-100 hover:bg-gray-300">
           自動填滿地圖
         </button>
@@ -75,7 +84,7 @@
   }
 
   #game-map:has(.pasture.hex) {
-    transform: translate(-12.5%, -12.5%) scale(1.5);
+    transform: translate(-12.5%, -12.5%) scale(1.2);
   }
 
   .pasture.blank { background-color: #dcfce7; }
@@ -83,6 +92,7 @@
   .pasture.green { background-color: #16a34a; }
   .pasture.blue { background-color: #60a5fa; }
   .pasture.yellow { background-color: #eab308; }
+  .pasture.orange { background-color: #f97316; }
 
   .pasture {
     display: flex;

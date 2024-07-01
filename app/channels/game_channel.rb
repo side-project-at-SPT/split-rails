@@ -14,6 +14,56 @@ class GameChannel < ApplicationCable::Channel
     player_left_game @game.id, current_user.id
   end
 
+  def echo(data)
+    transmit({ echo: data['message'] })
+  end
+
+  def place_stack(data)
+    res = @game.place_stack(target_x: data['x'].to_i, target_y: data['y'].to_i)
+
+    if res.errors.any?
+      Rails.logger.error { res.errors.full_messages }
+      return
+    end
+
+    Domain::GameStackPlacedEvent.new(game_id: @game.id).dispatch
+    Domain::GameTurnStartedEvent.new(game_id: @game.id).dispatch
+  end
+
+  def split_stack(data)
+    # if is not the player's turn
+    unless @game.current_player['id'] == current_user.id
+      Rails.logger.warn { 'Not your turn' }
+      Rails.logger.warn { "Current player: #{current_user.id}" }
+      Rails.logger.warn { "Your id: #{current_user.id}" }
+      return
+    end
+
+    required_params = %w[origin_x origin_y target_x target_y target_amount]
+    lacking_params = required_params.reject { |param| data.key?(param) }
+    if lacking_params.any?
+      Rails.logger.warn { "Missing required params: #{lacking_params.join(', ')}" }
+      return
+    end
+
+    params = {
+      origin_x: data.fetch('origin_x').to_i,
+      origin_y: data.fetch('origin_y').to_i,
+      target_x: data.fetch('target_x').to_i,
+      target_y: data.fetch('target_y').to_i,
+      target_amount: data.fetch('target_amount').to_i
+    }
+    res = @game.split_stack(**params)
+
+    if res.errors.any?
+      Rails.logger.error { res.errors.full_messages }
+      return
+    end
+
+    Domain::GameStackSplittedEvent.new(game_id: @game.id).dispatch
+    Domain::GameTurnStartedEvent.new(game_id: @game.id).dispatch
+  end
+
   private
 
   # def current_game_state

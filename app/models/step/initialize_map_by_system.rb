@@ -1,7 +1,7 @@
 module Step
   class InitializeMapBySystem < BaseStep
     def initialize(game, params = {})
-      super(game, step_type: 'initialize map by system', **params)
+      super(game, step_type: 'initialize_map_by_system', **params)
     end
 
     def exec
@@ -13,9 +13,8 @@ module Step
     def initialize_map_by_system
       errors.add(:base, 'The map is already initialized') and return unless @game.game_phase == 'build map'
 
-      @game_data[:step] = @game.steps.count
-      @game_data[:step_type] = 'initialize map by system'
-      @game_data[:current_player_index] = @game.current_player_index
+      @game_data.step_number = 1
+      @game_data.current_player_index = @game.current_player_index
       player_size = @game.players.size
       # 2: 32 -> 6 * 6
       # 3: 48 -> 7 * 7
@@ -27,8 +26,8 @@ module Step
           { x: i, y: j, is_blocked: false, stack: { color: 'blank', amount: 0 } }
         end
       end.flatten
-      @game_data[:pastures] = full_map.sample(SHEEP_INITIAL_QUANTITY * player_size)
-      @game_data[:phase] = 'place stack'
+      @game_data.pastures = full_map.sample(SHEEP_INITIAL_QUANTITY * player_size)
+      @game_data.game_phase = 'place_stack'
     end
   end
 end

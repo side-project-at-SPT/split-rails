@@ -12,19 +12,20 @@ RSpec.describe Step, type: :model do
 
   describe 'initialize_map_by_system' do
     it 'initializes the map' do
-      expect(Game.find(game.id).pastures.size).to eq(0)
-      expect(Game.find(game.id).game_phase).to eq('build map')
-
-      game.initialize_map_by_system
+      # NOTE: Current version of the game will build the map automatically
+      #
+      # expect(Game.find(game.id).pastures.size).to eq(0)
+      # expect(Game.find(game.id).game_phase).to eq('build map')
+      # game.initialize_map_by_system
 
       expect(Game.find(game.id).pastures.size).to eq(16 * 2)
-      expect(Game.find(game.id).game_phase).to eq('place stack')
+      expect(Game.find(game.id).game_phase).to eq('place_stack')
     end
   end
 
   describe 'play' do
     it 'places the stack' do
-      game.initialize_map_by_system
+      # game.initialize_map_by_system
 
       # ignore fail and retry until the stack is placed
       loop do
@@ -34,7 +35,7 @@ RSpec.describe Step, type: :model do
       expect(
         Game.find(game.id).pastures.count { |pasture| pasture['stack']['amount'].positive? }
       ).to eq(1)
-      expect(Game.find(game.id).game_phase).to eq('place stack')
+      expect(Game.find(game.id).game_phase).to eq('place_stack')
 
       # when second player places the stack
 
@@ -45,7 +46,7 @@ RSpec.describe Step, type: :model do
       expect(
         Game.find(game.id).pastures.count { |pasture| pasture['stack']['amount'].positive? }
       ).to eq(2)
-      expect(Game.find(game.id).game_phase).to eq('split stack')
+      expect(Game.find(game.id).game_phase).to eq('split_stack')
     end
   end
 
@@ -62,7 +63,7 @@ RSpec.describe Step, type: :model do
         break if game.random_place_stack.errors.empty?
       end
 
-      expect(Game.find(game.id).game_phase).to eq('split stack')
+      expect(Game.find(game.id).game_phase).to eq('split_stack')
 
       # ignore fail and retry until the stack is splitted
       loop do
@@ -72,9 +73,7 @@ RSpec.describe Step, type: :model do
       expect(
         Game.find(game.id).pastures.count { |pasture| pasture['stack']['amount'].positive? }
       ).to eq(3)
-      expect(Game.find(game.id).game_phase).to eq('split stack')
-
-      pp(Game.find(game.id).pastures.select { |pasture| pasture['stack']['amount'].positive? })
+      expect(Game.find(game.id).game_phase).to eq('split_stack')
     end
   end
 end

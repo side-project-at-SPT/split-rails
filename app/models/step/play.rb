@@ -1,7 +1,7 @@
 module Step
   class Play < BaseStep
     def initialize(game, params = {})
-      super(game, step_type: 'place stack', **params)
+      super(game, step_type: 'place_stack', **params)
     end
 
     def exec
@@ -47,16 +47,18 @@ module Step
 
       # write to game_data
 
-      @game_data[:step] = @game.steps.count
-      @game_data[:step_type] = 'place stack'
-      @game_data[:current_player_index] = @game.current_player_index
-      @game_data[:pastures] = @previous_pastures
+      # @game_data[:step] = @game.steps.count
+      @game_data.step_number = @game.steps.last.step_number + 1
+      # @game_data[:step_type] = 'place stack'
+      # @game_data[:current_player_index] = @game.current_player_index
+      @game_data.current_player_index = @game.current_player_index
+      @game_data.pastures = @previous_pastures
 
-      # if last player placed the stack, then go to the next phase
-      if @game_data[:pastures].count { |pasture| pasture['stack']['amount'].positive? } == @game.players.size
-        @game_data[:phase] = 'split stack'
+      # if all players placed the stack, move to split stack phase
+      if @game_data.pastures.count { |pasture| pasture['stack']['amount'].positive? } == @game.players.size
+        @game_data.game_phase = 'split_stack'
       else
-        @game_data[:phase] = 'place stack'
+        @game_data.game_phase = 'place_stack'
       end
     end
   end

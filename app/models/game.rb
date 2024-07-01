@@ -1,5 +1,6 @@
 class Game < ApplicationRecord
   belongs_to :room
+  has_many :steps, dependent: :destroy, class_name: 'GameStep'
 
   FLAG_AUTO_GENERATE_MAP_BY_SYSTEM = true
 
@@ -27,7 +28,7 @@ class Game < ApplicationRecord
     if steps.empty?
       'build map'
     else
-      steps.last['phase']
+      steps.last.game_phase
     end
   end
 
@@ -43,7 +44,11 @@ class Game < ApplicationRecord
   end
 
   def pastures
-    steps.last&.fetch('pastures', []) || []
+    if steps.empty?
+      []
+    else
+      steps.last.pastures
+    end
   end
 
   def new_step(step_type, params = {})
@@ -79,8 +84,6 @@ class Game < ApplicationRecord
   end
 
   def random_split_stack
-    # debugger
-
     current_player_color = players[current_player_index]['color']
 
     original_grid = pastures.find do |pasture|

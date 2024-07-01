@@ -10,15 +10,26 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2024_06_22_080838) do
+ActiveRecord::Schema[7.1].define(version: 2024_07_01_054837) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
+
+  create_table "game_steps", force: :cascade do |t|
+    t.bigint "game_id", null: false
+    t.integer "step_number", null: false
+    t.integer "step_type", null: false
+    t.integer "current_player_index", null: false
+    t.json "pastures", default: []
+    t.integer "game_phase", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["game_id"], name: "index_game_steps_on_game_id"
+  end
 
   create_table "games", force: :cascade do |t|
     t.bigint "room_id"
     t.boolean "is_finished", default: false
     t.json "players", default: []
-    t.json "steps", default: []
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.integer "current_player_index", default: 0
@@ -51,6 +62,7 @@ ActiveRecord::Schema[7.1].define(version: 2024_06_22_080838) do
     t.index ["visitor_id"], name: "index_visitors_rooms_on_visitor_id"
   end
 
+  add_foreign_key "game_steps", "games"
   add_foreign_key "visitors_rooms", "rooms"
   add_foreign_key "visitors_rooms", "visitors"
 end

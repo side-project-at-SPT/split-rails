@@ -1,7 +1,7 @@
 module Step
   class Split < BaseStep
     def initialize(game, params = {})
-      super(game, step_type: 'split stack', **params)
+      super(game, step_type: 'split_stack', **params)
     end
 
     def exec
@@ -72,11 +72,10 @@ module Step
 
       # write to game_data
 
-      @game_data[:step] = @game.steps.count
-      @game_data[:step_type] = 'split stack'
-      @game_data[:current_player_index] = @game.current_player_index
-      @game_data[:pastures] = @previous_pastures
-      @game_data[:phase] = 'split stack'
+      @game_data.step_number = @game.steps.last.step_number + 1
+      @game_data.current_player_index = @game.current_player_index
+      @game_data.pastures = @previous_pastures
+      @game_data.game_phase = 'split_stack'
     end
 
     private

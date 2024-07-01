@@ -18,7 +18,7 @@ module Step
 
       @game = game
       @step_type = step_type
-      @game_data = {}
+      @game_data = GameStep.new(game:, step_type:)
       # @previous_game_data = game.steps.empty? ? {} : game.steps.last
       @previous_pastures = game.pastures
       @original_grid = original_grid
@@ -34,11 +34,12 @@ module Step
       end
 
       case @step_type
-      when 'place pasture', 'place stack', 'split stack'
+      when 'place_pasture', 'place_stack', 'split_stack'
         @game.current_player_index = (@game.current_player_index + 1) % @game.players.size
-      when 'initialize map by system'
+      when 'initialize_map_by_system'
         # do nothing
       else
+        Rails.logger.error "Invalid step type: #{@step_type}"
         raise 'Invalid step type'
       end
 

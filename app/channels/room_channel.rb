@@ -25,7 +25,7 @@ class RoomChannel < ApplicationCable::Channel
   end
 
   def receive(data)
-    self.broadcast_to(Room.find_by(id: params[:room_id]), data)
+    broadcast_to(Room.find_by(id: params[:room_id]), data)
   end
 
   def set_character(data)
@@ -43,7 +43,7 @@ class RoomChannel < ApplicationCable::Channel
 
     players = room.players.map do |player|
       {
-        player_id: player.id,
+        id: player.id,
         nickname: player.nickname,
         character: player.character,
         is_ready: player.ready?

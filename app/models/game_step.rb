@@ -5,7 +5,8 @@ class GameStep < ApplicationRecord
     initialize_map_by_system: 0,
     place_pasture: 1,
     place_stack: 2,
-    split_stack: 3
+    split_stack: 3,
+    game_over: 4
   }, _suffix: :step
 
   enum game_phase: {

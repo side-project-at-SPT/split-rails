@@ -32,9 +32,14 @@ module Step
         return self
       end
 
+      flag_on_going = true
+
       case @step_type
-      when 'place_pasture', 'place_stack', 'split_stack'
+      when 'place_pasture', 'place_stack'
         @game.current_player_index = (@game.current_player_index + 1) % @game.players.size
+      when 'split_stack'
+        # @game.current_player_index = (@game.current_player_index + 1) % @game.players.size
+        flag_on_going = @game.next_available_player_index_existed?
       when 'initialize_map_by_system'
         # do nothing
       else
@@ -43,9 +48,26 @@ module Step
       end
 
       @game.steps << @game_data
-      @game.save!
-
       Rails.logger.info { "step_type: #{@step_type} executed" }
+
+      game_over = !flag_on_going
+      if game_over
+        game_over_step = GameStep.new(
+          game:,
+          step_number: @game_data.step_number + 1,
+          step_type: 'game_over',
+          current_player_index: @game_data.current_player_index,
+          pastures: @game_data.pastures,
+          game_phase: 'game_over',
+          action: {
+            author: 'system',
+            action_name: 'game_over'
+          }
+        )
+        @game.steps << game_over_step
+        Rails.logger.info { 'game_over_step executed' }
+      end
+      @game.save!
 
       self
     end

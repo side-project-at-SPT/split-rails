@@ -24,6 +24,10 @@ class RoomChannel < ApplicationCable::Channel
     # stop_all_streams
   end
 
+  def receive(data)
+    self.broadcast_to(Room.find_by(id: params[:room_id]), data)
+  end
+
   def set_character(data)
     room = Room.find_by(id: params[:room_id])
 

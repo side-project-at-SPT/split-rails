@@ -12,6 +12,7 @@ class LobbyChannel < ApplicationCable::Channel
   end
 
   def receive(data)
+    ActionCable.server.broadcast('lobby_channel', data)
   end
 
   def echo(data)

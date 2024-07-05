@@ -14,6 +14,10 @@ class GameChannel < ApplicationCable::Channel
     player_left_game @game.id, current_user.id
   end
 
+  def receive(data)
+    self.broadcast_to(@game, data)
+  end
+
   def echo(data)
     transmit({ echo: data['message'] })
   end

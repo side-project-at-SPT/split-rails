@@ -67,7 +67,7 @@ module Step
       offset_y = pastures.map { |g| g[:y] }.min
 
       # 2. offset the grids
-      pastures.map do |g|
+      @game_data.pastures = pastures.map do |g|
         g[:x] -= offset_x
         g[:y] -= offset_y
         g

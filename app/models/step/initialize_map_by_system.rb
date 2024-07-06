@@ -61,15 +61,16 @@ module Step
         grid_candidates += connect_grids(sample_grid)
       end
 
-      # offset grids to origin (0, 0)
-      # 1. find the minimum of minimum x and minimum y
-      min_x = pastures.map { |g| g[:x] }.min
-      min_y = pastures.map { |g| g[:y] }.min
-      offset = [min_x, min_y].min
+      # try to move the map to the top left corner
+      # 1. find the offset_x and offset_y
+      offset_x = pastures.map { |g| g[:x] }.min
+      offset_y = pastures.map { |g| g[:y] }.min
 
       # 2. offset the grids
-      @game_data.pastures = pastures.map do |g|
-        { x: g[:x] - offset, y: g[:y] - offset, is_blocked: false, stack: { color: 'blank', amount: 0 } }
+      pastures.map do |g|
+        g[:x] -= offset_x
+        g[:y] -= offset_y
+        g
       end
     end
 

@@ -93,16 +93,22 @@ module Step
         'amount' => @destination_grid['stack']['amount']
       }
 
-      Domain::Common.grid_and_its_neighbors_on_the_map(target, @previous_pastures).each do |grid|
+      grids_to_check = Domain::Common.grid_and_its_neighbors_on_the_map(target, @previous_pastures)
+      @previous_pastures.select { |g| grids_to_check.include?(g) }.each do |grid|
         grid['is_blocked'] = (
           grid['is_blocked'] ||
-          grid['stack']['amount'] == 1 || Domain::Common.grid_and_its_neighbors_on_the_map(grid, @previous_pastures).all? do |g|
-            g['stack']['amount'].positive?
-          end)
+          grid['stack']['amount'] == 1 ||
+          Domain::Common.all_neighbors_capture?(grid, @previous_pastures)
+        )
       end
 
       original_grid['stack']['amount'] -= target['stack']['amount']
       original_grid['is_blocked'] = true if original_grid['stack']['amount'] == 1
+
+      if @previous_pastures.any? { |g| g['is_blocked'] }
+        Rails.logger.warn { 'The following pastures are blocked' }
+        Rails.logger.warn { @previous_pastures.select { |g| g['is_blocked'] }.map { |g| [g['x'], g['y']] } }
+      end
 
       # write to game_data
 

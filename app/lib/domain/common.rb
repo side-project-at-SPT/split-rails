@@ -26,6 +26,12 @@ module Domain
       def grid_and_its_neighbors_on_the_map(grid, pastures)
         connect_grids(grid).select { |g| pastures.include?(g) } + [grid]
       end
+
+      def all_neighbors_capture?(grid, pastures)
+        connect_grids(grid)
+          .select { |g| pastures.include?(g) }
+          .all? { |g| g['stack']['amount'].positive? }
+      end
     end
   end
 end

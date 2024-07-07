@@ -29,7 +29,7 @@ module Domain
 
       def all_neighbors_capture?(grid, pastures)
         connect_grids(grid)
-          .select { |g| pastures.include?(g) }
+          .select { |g| pastures.include?(g) && g['stack']['amount'].positive? }
           .all? { |g| g['stack']['amount'].positive? }
       end
     end

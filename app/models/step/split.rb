@@ -94,12 +94,15 @@ module Step
       }
 
       Domain::Common.grid_and_its_neighbors_on_the_map(target, @previous_pastures).each do |grid|
-        grid['is_blocked'] = Domain::Common.grid_and_its_neighbors_on_the_map(grid, @previous_pastures).all? do |g|
-          g['is_blocked']
-        end
+        grid['is_blocked'] = (
+          grid['is_blocked'] ||
+          grid['stack']['amount'] == 1 || Domain::Common.grid_and_its_neighbors_on_the_map(grid, @previous_pastures).all? do |g|
+            g['stack']['amount'].positive?
+          end)
       end
 
       original_grid['stack']['amount'] -= target['stack']['amount']
+      original_grid['is_blocked'] = true if original_grid['stack']['amount'] == 1
 
       # write to game_data
 

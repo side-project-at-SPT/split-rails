@@ -49,7 +49,7 @@ module Step
       target_grid_number = @game.players.size * 16
       initial_grid = { x: 10, y: 10, is_blocked: false, stack: { color: 'blank', amount: 0 } }
       pastures = [initial_grid]
-      grid_candidates = connect_grids(initial_grid)
+      grid_candidates = Domain::Common.connect_grids(initial_grid)
 
       while pastures.size < target_grid_number
         # pop random grid from grid_candidates
@@ -58,7 +58,7 @@ module Step
         next if pastures.include?(sample_grid)
 
         pastures << sample_grid
-        grid_candidates += connect_grids(sample_grid)
+        grid_candidates += Domain::Common.connect_grids(sample_grid)
       end
 
       # try to move the map to the top left corner
@@ -72,25 +72,6 @@ module Step
         g[:y] -= offset_y
         g
       end
-    end
-
-    def connect_grids(grid)
-      # is connected means that the grid is connected to the grid that shares the same edge
-      # the grid is Hexagon
-      # the grid coordinate is (x, y)
-      # the pseudo axis is a: "x = N", b: "y = N", c: "x + y = N"
-
-      # given the grid coordinate (x, y)
-      # output the connected grid coordinate
-
-      grids = [
-        { x: grid[:x] + 1, y: grid[:y] },
-        { x: grid[:x] - 1, y: grid[:y] },
-        { x: grid[:x], y: grid[:y] + 1 },
-        { x: grid[:x], y: grid[:y] - 1 },
-        { x: grid[:x] + 1, y: grid[:y] - 1 },
-        { x: grid[:x] - 1, y: grid[:y] + 1 }
-      ].map { |g| { x: g[:x], y: g[:y], is_blocked: false, stack: { color: 'blank', amount: 0 } } }
     end
   end
 end

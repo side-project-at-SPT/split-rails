@@ -93,7 +93,11 @@ module Step
         'amount' => @destination_grid['stack']['amount']
       }
 
-      target['is_blocked'] = check_blocked?(target, @previous_pastures)
+      Domain::Common.grid_and_its_neighbors_on_the_map(target, @previous_pastures).each do |grid|
+        grid['is_blocked'] = Domain::Common.grid_and_its_neighbors_on_the_map(grid, @previous_pastures).all? do |g|
+          g['is_blocked']
+        end
+      end
 
       original_grid['stack']['amount'] -= target['stack']['amount']
 

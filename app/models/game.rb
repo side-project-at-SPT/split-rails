@@ -217,6 +217,8 @@ class Game < ApplicationRecord
       counter += 1
     end
 
+    Rails.logger.warn { available_pastures } if available_pastures.present?
+
     available_pastures.present?
   end
 

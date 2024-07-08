@@ -131,7 +131,13 @@ module Api
         return render json: { error: res.errors.full_messages }, status: :unprocessable_entity if res.errors.any?
 
         Domain::GameStackSplittedEvent.new(game_id: @game.id).dispatch
-        Domain::GameTurnStartedEvent.new(game_id: @game.id).dispatch
+
+        if @game.game_phase == 'game_over'
+          @game.close
+          Domain::GameEndEvent.new(game_id: @game.id).dispatch
+        else
+          Domain::GameTurnStartedEvent.new(game_id: @game.id).dispatch
+        end
 
         render json: { message: 'Stack splitted' }, status: :ok
       end

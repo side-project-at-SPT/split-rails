@@ -97,7 +97,7 @@ module Step
       grids_to_check = Domain::Common.grid_and_its_neighbors_on_the_map(target, @previous_pastures)
       @previous_pastures
         # checks if the grid is exist in the map
-        .select { |g| grids_to_check.include?(g) }
+        .select { |g| grids_to_check.any? { |gtc| g['x'] == gtc['x'] && g['y'] == gtc['y'] } }
         # checks if the grid is blocked
         .each do |grid|
         grid['is_blocked'] = (

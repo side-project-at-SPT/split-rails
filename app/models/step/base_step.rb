@@ -61,11 +61,11 @@ module Step
       game_over = !flag_on_going
       if game_over
         game_over_step = GameStep.new(
-          game:,
+          game: @game,
           step_number: @game_data.step_number + 1,
           step_type: 'game_over',
-          current_player_index: @game_data.current_player_index,
-          pastures: @game_data.pastures,
+          current_player_index: @game.current_player_index,
+          pastures: @previous_pastures,
           game_phase: 'game_over',
           action: {
             author: 'system',

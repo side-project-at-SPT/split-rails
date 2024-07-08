@@ -69,17 +69,13 @@
     > .pasture.hex[data-y="4"] { --grid-row-offset: 4; }
     > .pasture.hex[data-y="5"] { --grid-row-offset: 5; }
     > .pasture.hex[data-y="6"] { --grid-row-offset: 6; }
-    /* > .pasture.hex[data-y="0"] { --grid-row-offset: calc(var(--grid-row-count)); }
-    > .pasture.hex[data-y="1"] { --grid-row-offset: calc(var(--grid-row-count) - 1); }
-    > .pasture.hex[data-y="2"] { --grid-row-offset: calc(var(--grid-row-count) - 2); }
-    > .pasture.hex[data-y="3"] { --grid-row-offset: calc(var(--grid-row-count) - 3); }
-    > .pasture.hex[data-y="4"] { --grid-row-offset: calc(var(--grid-row-count) - 4); }
-    > .pasture.hex[data-y="5"] { --grid-row-offset: calc(var(--grid-row-count) - 5); }
-    > .pasture.hex[data-y="6"] { --grid-row-offset: calc(var(--grid-row-count) - 6); } */
+    > .pasture.hex[data-y="7"] { --grid-row-offset: 7; }
+    > .pasture.hex[data-y="8"] { --grid-row-offset: 8; }
+    > .pasture.hex[data-y="9"] { --grid-row-offset: 9; }
+    > .pasture.hex[data-y="10"] { --grid-row-offset: 10; }
   }
 
   #game-map > .pasture.hex {
-    /* transform: translate(calc(50% * var(--grid-row-offset)), calc(25% * var(--grid-row-offset))); */
     transform: translate(calc(50% * var(--grid-row-offset)), calc(25% * (calc(7 - var(--grid-row-offset)))));
   }
 

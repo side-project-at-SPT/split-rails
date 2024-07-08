@@ -14,7 +14,7 @@ const writeError = (error) => {
 };
 const prepareMap = ({ board, game_config }) => {
   board.innerHTML = "";
-  const mapSize = game_config.players_number + 10;
+  const mapSize = game_config.players_number + 9;
   for (let y = 0; y < mapSize; y++) {
     for (let x = 0; x < mapSize; x++) {
       const pasture = document.createElement("div");

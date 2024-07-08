@@ -176,6 +176,10 @@ module Api
 
         room = @game.room
 
+        return render json: {
+          error: 'Need at least 2 players to start a new game'
+        }, status: :unprocessable_entity if room.players.size < 2
+
         new_game_id = room.start_new_game.id
         Domain::GameCreatedEvent.new(game_id: @game.id, new_game_id:).dispatch
 

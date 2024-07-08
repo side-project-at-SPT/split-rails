@@ -209,15 +209,20 @@ class Game < ApplicationRecord
     counter = 0
 
     while available_pastures.empty? && counter < players.size
-      self.current_player_index = (current_player_index + 1) % players.size
-      available_pastures = pastures_of_player_color(players[current_player_index]['color'])
-      available_pastures = available_pastures.select do |pasture|
+      self.current_player_index = (self.current_player_index + 1) % players.size
+      captured_pastures = pastures_of_player_color(players[current_player_index]['color'])
+      available_pastures = captured_pastures.select do |pasture|
         pasture['stack']['amount'].positive? && !pasture['is_blocked']
       end
       counter += 1
     end
 
-    Rails.logger.warn { available_pastures } if available_pastures.present?
+    if available_pastures.present?
+      Rails.logger.warn { "Next player has available pastures:" }
+      Rails.logger.warn { available_pastures }
+    else
+      Rails.logger.warn { "No available pastures for next player, turn pass to the next player" }
+    end
 
     available_pastures.present?
   end

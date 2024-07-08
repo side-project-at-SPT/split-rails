@@ -38,7 +38,6 @@ module Step
       when 'place_pasture', 'place_stack'
         @game.current_player_index = (@game.current_player_index + 1) % @game.players.size
       when 'split_stack'
-        # @game.current_player_index = (@game.current_player_index + 1) % @game.players.size
         flag_on_going = @game.next_available_player_index_existed?
       when 'initialize_map_by_system'
         # do nothing

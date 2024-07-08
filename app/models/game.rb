@@ -203,29 +203,30 @@ class Game < ApplicationRecord
     Step::InitializeMapBySystem.new(self).exec
   end
 
-  def next_available_player_index_existed?
-    available_pastures = []
+  # deprecated
+  # def next_available_player_index_existed?
+  #   available_pastures = []
 
-    counter = 0
+  #   counter = 0
 
-    while available_pastures.empty? && counter < players.size
-      self.current_player_index = (self.current_player_index + 1) % players.size
-      captured_pastures = pastures_of_player_color(players[current_player_index]['color'])
-      available_pastures = captured_pastures.select do |pasture|
-        pasture['stack']['amount'].positive? && !pasture['is_blocked']
-      end
-      counter += 1
-    end
+  #   while available_pastures.empty? && counter < players.size
+  #     self.current_player_index = (self.current_player_index + 1) % players.size
+  #     captured_pastures = pastures_of_player_color(players[current_player_index]['color'])
+  #     available_pastures = captured_pastures.select do |pasture|
+  #       pasture['stack']['amount'].positive? && !pasture['is_blocked']
+  #     end
+  #     counter += 1
+  #   end
 
-    if available_pastures.present?
-      Rails.logger.warn { "Next player has available pastures:" }
-      Rails.logger.warn { available_pastures }
-    else
-      Rails.logger.warn { "No available pastures for next player, turn pass to the next player" }
-    end
+  #   if available_pastures.present?
+  #     Rails.logger.warn { "Next player has available pastures:" }
+  #     Rails.logger.warn { available_pastures }
+  #   else
+  #     Rails.logger.warn { "No available pastures for next player, turn pass to the next player" }
+  #   end
 
-    available_pastures.present?
-  end
+  #   available_pastures.present?
+  # end
 
   def pastures_of_player_color(color)
     pastures.select { |pasture| pasture['stack']['color'] == color }

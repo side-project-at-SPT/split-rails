@@ -38,7 +38,16 @@ module Step
       when 'place_pasture', 'place_stack'
         @game.current_player_index = (@game.current_player_index + 1) % @game.players.size
       when 'split_stack'
-        flag_on_going = @game.next_available_player_index_existed?
+        next_player_index = Domain::Common.next_available_player_index(
+          current_player_index: @game.current_player_index,
+          colors: @game.players.map { |player| player['color'] },
+          pastures: @previous_pastures
+        )
+        if next_player_index == -1
+          flag_on_going = false
+        else
+          @game.current_player_index = next_player_index
+        end
       when 'initialize_map_by_system'
         # do nothing
       else

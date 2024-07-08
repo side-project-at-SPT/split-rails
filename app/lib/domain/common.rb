@@ -56,6 +56,29 @@ module Domain
           ].map { |g| (pastures.select { |pasture| pasture['x'] == g[:x] && pasture['y'] == g[:y] }).first }
         ).compact.map(&:with_indifferent_access).all? { |g| g['stack']['amount'].positive? }
       end
+
+      def next_available_player_index(current_player_index:, colors:, pastures:)
+        available_pastures = []
+
+        counter = 0
+
+        while available_pastures.empty? && counter < colors.size
+          current_player_index = (current_player_index + 1) % colors.size
+          captured_pastures = pastures.select do |pasture|
+            pasture['stack']['color'] == colors[current_player_index]
+          end
+          available_pastures = captured_pastures.select do |pasture|
+            !pasture['is_blocked']
+          end
+          counter += 1
+        end
+
+        if available_pastures.empty?
+          -1
+        else
+          current_player_index
+        end
+      end
     end
   end
 end

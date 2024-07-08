@@ -132,7 +132,7 @@ module Api
 
         Domain::GameStackSplittedEvent.new(game_id: @game.id).dispatch
 
-        if @game.game_phase == 'game_over'
+        if @game.reload.game_phase == 'game_over'
           @game.close
           Domain::GameEndEvent.new(game_id: @game.id).dispatch
         else

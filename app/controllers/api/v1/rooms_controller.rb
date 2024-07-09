@@ -47,6 +47,8 @@ module Api
 
         Room.find_by(id: params[:id]).close
 
+        Domain::CloseRoomEvent.new(room_id: @room.id).dispatch
+
         head :ok
       end
     end

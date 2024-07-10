@@ -134,10 +134,7 @@ class Game < ApplicationRecord
       errors.add(:base, 'You can only split a stack with more than 1 sheep') and return self
     end
 
-    # # the path between the original grid and the destination grid should be continuous
-    # unless continuous_path?(origin_x, origin_y, target_x, target_y)
-    #   errors.add(:base, 'The path between the original grid and the destination grid should be continuous') and return self
-    # end
+    # TODO: check path between original and target is continuous
 
     Step::Split.new(
       self,
@@ -152,14 +149,6 @@ class Game < ApplicationRecord
       }
     ).exec
   end
-
-  # def reset_game
-  #   # finish current game and create new game
-  #   update!(is_finished: true)
-
-  #   # create new game
-  #   room.start_new_game
-  # end
 
   def game_config
     Jbuilder.new do |json|
@@ -202,31 +191,6 @@ class Game < ApplicationRecord
   def initialize_map_by_system
     Step::InitializeMapBySystem.new(self).exec
   end
-
-  # deprecated
-  # def next_available_player_index_existed?
-  #   available_pastures = []
-
-  #   counter = 0
-
-  #   while available_pastures.empty? && counter < players.size
-  #     self.current_player_index = (self.current_player_index + 1) % players.size
-  #     captured_pastures = pastures_of_player_color(players[current_player_index]['color'])
-  #     available_pastures = captured_pastures.select do |pasture|
-  #       pasture['stack']['amount'].positive? && !pasture['is_blocked']
-  #     end
-  #     counter += 1
-  #   end
-
-  #   if available_pastures.present?
-  #     Rails.logger.warn { "Next player has available pastures:" }
-  #     Rails.logger.warn { available_pastures }
-  #   else
-  #     Rails.logger.warn { "No available pastures for next player, turn pass to the next player" }
-  #   end
-
-  #   available_pastures.present?
-  # end
 
   def pastures_of_player_color(color)
     pastures.select { |pasture| pasture['stack']['color'] == color }

@@ -117,8 +117,8 @@ module Step
       original_grid['is_blocked'] = true if original_grid['stack']['amount'] == 1
 
       if @previous_pastures.any? { |g| g['is_blocked'] }
-        Rails.logger.warn { 'The following pastures are blocked' }
-        Rails.logger.warn { @previous_pastures.select { |g| g['is_blocked'] }.map { |g| [g['x'], g['y']] } }
+        Rails.logger.info { 'The following pastures are blocked' }
+        Rails.logger.info { @previous_pastures.select { |g| g['is_blocked'] }.map { |g| [g['x'], g['y']] } }
       end
 
       # write to game_data

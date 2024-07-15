@@ -26,7 +26,7 @@ module Api
 
         current_time = Time.now.to_i
         render json: {
-          url: "https://split-sheep-spt.zeabur.com/#/games/#{current_time}"
+          url: "https://split-sheep-spt.zeabur.app/#/games/#{current_time}"
         }, status: :ok
       end
 

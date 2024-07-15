@@ -4,7 +4,9 @@ Rails.application.routes.draw do
 
   namespace :api do
     namespace :v1 do
-      resources :users, only: %i[create index]
+      resources :users, only: %i[create index] do
+        post 'login-via-gaas-token', on: :collection
+      end
       get 'me', to: 'users#show'
       resource :preferences, only: %i[show update]
 

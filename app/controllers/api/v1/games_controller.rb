@@ -11,8 +11,7 @@ module Api
       # 開始遊戲
       def create
         # print auth info in request header
-        Rails.logger.warn { "Authorization: #{request.headers['Authorization']}" }
-        Rails.logger.warn { "Cookie: #{cookies['_token']}" }
+        Rails.logger.debug { "Authorization: #{request.headers['Authorization']}" }
 
         # parse params
         Rails.logger.warn { "roomId: #{params['roomId']}" }
@@ -21,7 +20,7 @@ module Api
         players.each do |player|
           Rails.logger.warn { 'player' }
           Rails.logger.warn { "id: #{player['id']}" }
-          Rails.logger.warn { "nickname: #{player['nickname']}" }
+          Rails.logger.warn { "nickName: #{player['nickName']}" }
         end
 
         current_time = Time.now.to_i

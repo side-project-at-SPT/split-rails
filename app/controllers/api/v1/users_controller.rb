@@ -10,6 +10,32 @@ module Api
         render status: :ok
       end
 
+      def login_via_gaas_token
+        # auth0_token = params.fetch(:token)
+        # via bearer token
+        reg = /\ABearer .+\z/
+        auth0_token = request.headers['Authorization'].match(reg).to_s.split(' ')[1]
+        # TODO: parse auth0_token
+
+        # use auth0_token to get user info
+        # api endpoint: https://api.gaas.waterballsa.tw/users/me
+        # headers
+        # Authorization
+        # Bearer {auth0_token}
+
+        uri = URI('https://api.gaas.waterballsa.tw/users/me')
+        req = Net::HTTP::Get.new uri
+        req['Authorization'] = "Bearer #{auth0_token}"
+        res = Net::HTTP.start(uri.host, uri.port, use_ssl: true) do |http|
+          http.request req
+        end
+
+        user = Visitor.find_or_initialize_by(name: res['id'])
+        Rails.logger.warn { "user: #{user}" }
+
+        head :ok
+      end
+
       # POST /api/v1/users
       def create
         # user_params = params.require(:user).permit(:name, :password)

@@ -18,6 +18,7 @@ module Api
         reg = /\ABearer .+\z/
         auth0_token = request.headers['Authorization'].match(reg).to_s.split(' ')[1]
         # TODO: parse auth0_token
+        Rails.logger.warn { 'TODO: validate auth0_token' }
 
         # use auth0_token to get user info
         # api endpoint: https://api.gaas.waterballsa.tw/users/me
@@ -33,9 +34,15 @@ module Api
         end
 
         user = Visitor.find_or_initialize_by(name: res['id'])
-        Rails.logger.warn { "user: #{user}" }
+        if user.new_record?
+          user.password = SecureRandom.alphanumeric(16)
+          user.save!
+          user.update!(preferences: { nickname: res['nickname'] || 'player from gaas' })
+        end
 
-        head :ok
+        Rails.logger.debug { user.inspect }
+
+        render json: { token: user.encode_jwt }, status: :ok
       end
 
       # POST /api/v1/users

@@ -1,11 +1,43 @@
 module Api
   module V1
     class GamesController < BaseController
+      require 'net/http'
+
       before_action :find_game,
                     only: %i[show destroy play split init_map_automatically reset_game
                              place_stack random_place_stack
                              random_split_stack]
-      skip_before_action :load_jwt_request, only: %i[create]
+      skip_before_action :load_jwt_request, only: %i[create end_game_via_gaas_token]
+
+      def end_game_via_gaas_token
+        # @game.close
+        @game = Game.find_by(id: params[:id])
+        if @game.present?
+          @game.close
+        else
+          Rails.logger.warn { 'Game not found' }
+        end
+
+        # auth0_token = params.fetch(:token)
+        # via bearer token
+        reg = /\ABearer .+\z/
+        auth0_token = request.headers['Authorization'].match(reg).to_s.split(' ')[1]
+        # TODO: parse auth0_token
+        Rails.logger.warn { 'TODO: validate auth0_token' }
+
+        uri = URI("https://api.gaas.waterballsa.tw/rooms/#{params[:id]}:endGame")
+        req = Net::HTTP::Post.new uri
+        req['Authorization'] = "Bearer #{auth0_token}"
+        res = Net::HTTP.start(uri.host, uri.port, use_ssl: true) do |http|
+          http.request req
+        end
+
+        if res.code.to_i == 200
+          render json: { message: 'Game ended' }, status: :ok
+        else
+          render json: { error: 'Failed to end game' }, status: :unprocessable_entity
+        end
+      end
 
       # POST /api/v1/games
       # 開始遊戲

@@ -22,6 +22,8 @@ Rails.application.routes.draw do
       end
       resources :games, only: %i[show destroy create] do
         member do
+          post 'end-game-via-gaas-token'
+
           post 'init-map-automatically', to: 'games#init_map_automatically'
           post 'reset-game', to: 'games#reset_game'
 

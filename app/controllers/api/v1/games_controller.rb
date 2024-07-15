@@ -25,7 +25,13 @@ module Api
         # TODO: parse auth0_token
         Rails.logger.warn { 'TODO: validate auth0_token' }
 
-        uri = URI("https://api.gaas.waterballsa.tw/rooms/#{params[:id]}:endGame")
+        room_id = $redis.get("room_id_of:#{params[:id]}")
+        if room_id.nil?
+          Rails.logger.warn { "Room not found: #{params[:id]}" }
+          return render json: { error: 'Room not found' }, status: :not_found
+        end
+
+        uri = URI("https://api.gaas.waterballsa.tw/rooms/#{room_id}:endGame")
         req = Net::HTTP::Post.new uri
         req['Authorization'] = "Bearer #{auth0_token}"
         res = Net::HTTP.start(uri.host, uri.port, use_ssl: true) do |http|
@@ -56,6 +62,8 @@ module Api
         end
 
         current_time = Time.now.to_i
+        $redis.set("room_id_of:#{current_time}", params['roomId'])
+        $redis.expire("room_id_of:#{current_time}", 60 * 60) # 1 hour
         render json: {
           url: "https://split-sheep-spt.zeabur.app/#/games/#{current_time}"
         }, status: :ok

@@ -5,30 +5,29 @@ module Api
                     only: %i[show destroy play split init_map_automatically reset_game
                              place_stack random_place_stack
                              random_split_stack]
-      # show create destroy play split
+      skip_before_action :load_jwt_request, only: %i[create]
 
-      # POST /api/v1/rooms/:id/game
+      # POST /api/v1/games
       # 開始遊戲
       def create
-        room = Room.find_by(id: params[:id])
-        return render json: { error: 'Room not found' }, status: :not_found unless room
-        return render json: { error: 'Room is already closed' }, status: :unprocessable_entity if room.closed?
+        # print auth info in request header
+        Rails.logger.warn { "Authorization: #{request.headers['Authorization']}" }
+        Rails.logger.warn { "Cookie: #{cookies['_token']}" }
 
-        user = Visitor.find(@jwt_request['sub'])
-        unless room.players.include?(user)
-          return render json: { error: 'You are not in this room' },
-                        status: :unauthorized
+        # parse params
+        Rails.logger.warn { "roomId: #{params['roomId']}" }
+        players = params['players']
+        Rails.logger.warn { 'players is empty' } if players.empty?
+        players.each do |player|
+          Rails.logger.warn { 'player' }
+          Rails.logger.warn { "id: #{player['id']}" }
+          Rails.logger.warn { "nickname: #{player['nickname']}" }
         end
 
-        if room.games.last&.on_going?
-          return render json: { error: 'Game is already on going' }, status: :unprocessable_entity
-        end
-
-        return render json: { error: 'Not enough players' }, status: :unprocessable_entity if room.players.size < 2
-
-        room.start_new_game
-
-        render json: { game: room.games.last }, status: :created
+        current_time = Time.now.to_i
+        render json: {
+          url: "https://split-sheep-spt.zeabur.com/#/games/#{current_time}"
+        }, status: :ok
       end
 
       # GET /api/v1/games/:id?step=0
@@ -182,9 +181,11 @@ module Api
 
         room = @game.room
 
-        return render json: {
-          error: 'Need at least 2 players to start a new game'
-        }, status: :unprocessable_entity if room.players.size < 2
+        if room.players.size < 2
+          return render json: {
+            error: 'Need at least 2 players to start a new game'
+          }, status: :unprocessable_entity
+        end
 
         new_game_id = room.start_new_game.id
         Domain::GameCreatedEvent.new(game_id: @game.id, new_game_id:).dispatch

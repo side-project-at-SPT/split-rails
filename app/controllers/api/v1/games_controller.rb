@@ -32,7 +32,7 @@ module Api
           http.request req
         end
 
-        if res.code.to_i == 200
+        if res.code.to_i.between?(200, 299)
           render json: { message: 'Game ended' }, status: :ok
         else
           render json: { error: 'Failed to end game' }, status: :unprocessable_entity

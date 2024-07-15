@@ -1,6 +1,8 @@
 module Api
   module V1
     class UsersController < BaseController
+      require 'net/http'
+
       skip_before_action :load_jwt_request, only: %i[create login_via_gaas_token]
 
       # GET /api/v1/users

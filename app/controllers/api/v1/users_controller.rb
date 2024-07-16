@@ -33,8 +33,15 @@ module Api
           http.request req
         end
 
-        res = JSON.parse(res.body)
-        Rails.logger.warn { res }
+        unless res.code.to_i.between?(200, 299)
+          Rails.logger.warn { "Failed to get user info: #{res.code}" }
+          begin
+            message = JSON.parse(res.body)
+            Rails.logger.debug { message }
+          rescue StandardError => e
+            Rails.logger.error { e }
+          end
+        end
 
         user = Visitor.find_or_initialize_by(name: res['id'])
         if user.new_record?

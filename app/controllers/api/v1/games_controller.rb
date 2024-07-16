@@ -25,10 +25,10 @@ module Api
         # TODO: parse auth0_token
         Rails.logger.warn { 'TODO: validate auth0_token' }
 
-        room_id = $redis.get("room_id_of:#{params[:id]}")
+        room_id = $redis.get("gaas_room_id_of:#{params[:id]}")
         if room_id.nil?
-          Rails.logger.warn { "Room not found: #{params[:id]}" }
-          return render json: { error: 'Room not found' }, status: :not_found
+          Rails.logger.warn { "GaaS Room not found: #{params[:id]}" }
+          return render json: { error: 'GaaS Room not found' }, status: :not_found
         end
 
         uri = URI("https://api.gaas.waterballsa.tw/rooms/#{room_id}:endGame")
@@ -61,11 +61,16 @@ module Api
           Rails.logger.warn { "nickName: #{player['nickName']}" }
         end
 
-        current_time = Time.now.to_i
-        $redis.set("room_id_of:#{current_time}", params['roomId'])
-        $redis.expire("room_id_of:#{current_time}", 60 * 60) # 1 hour
+        room = Room.create!(name: "#{player['nickName']}'s Room")
+
+        # current_time = Time.now.to_i
+        $redis.set("gaas_room_id_of:#{room.id}", params['roomId'])
+        $redis.expire("gaas_room_id_of:#{room.id}", 60 * 60) # 1 hour
+
+        Domain::CreateRoomEvent.new(room_id: room.id).dispatch
+
         render json: {
-          url: "https://split-sheep-spt.zeabur.app/#/games/#{current_time}"
+          url: "https://split-sheep-spt.zeabur.app/#/games/#{room.id}"
         }, status: :ok
       end
 

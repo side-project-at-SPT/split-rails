@@ -70,7 +70,7 @@ module Api
         Domain::CreateRoomEvent.new(room_id: room.id).dispatch
 
         render json: {
-          url: "https://split-sheep-spt.zeabur.app/#/games/#{room.id}"
+          url: "https://split-sheep-spt.zeabur.app/#/room/#{room.id}"
         }, status: :ok
       end
 

@@ -33,6 +33,9 @@ module Api
           http.request req
         end
 
+        res = JSON.parse(res.body)
+        Rails.logger.warn { res }
+
         user = Visitor.find_or_initialize_by(name: res['id'])
         if user.new_record?
           user.password = SecureRandom.alphanumeric(16)

@@ -61,7 +61,7 @@ module Api
           Rails.logger.warn { "nickName: #{player['nickName']}" }
         end
 
-        room = Room.create!(name: "#{player['nickName']}'s Room")
+        room = Room.create!(name: "#{params['players'][0]['nickName']}'s Room")
 
         # current_time = Time.now.to_i
         $redis.set("gaas_room_id_of:#{room.id}", params['roomId'])

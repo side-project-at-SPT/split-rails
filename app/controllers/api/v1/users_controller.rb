@@ -43,11 +43,12 @@ module Api
           end
         end
 
-        user = Visitor.find_or_initialize_by(name: res['id'])
+        message = JSON.parse(res.body)
+        user = Visitor.find_or_initialize_by(name: message['id'])
         if user.new_record?
           user.password = SecureRandom.alphanumeric(16)
           user.save!
-          user.update!(preferences: { nickname: res['nickname'] || 'player from gaas' })
+          user.update!(preferences: { nickname: message['nickname'] || 'player from gaas' })
         end
 
         Rails.logger.debug { user.inspect }

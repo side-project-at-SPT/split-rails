@@ -1,0 +1,33 @@
+# A docker-compose for ruby on rails development environment
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    volumes:
+      - .:/app
+    ports:
+      - "3000:3000"
+    depends_on:
+      - db 
+    environment:
+      - DATABASE_URL=postgresql://postgres:password@db:5432/app_development
+      - SECRET_KEY_BASE=secret_key_base
+      - RAILS_ENV=development
+      - ENABLE_RACK_ATTACK=true
+      - RAILS_DEV_CACHE=true
+
+  db:
+    image: postgres:14
+    volumes:
+      - db:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: app_development
+
+volumes:
+  db:
+    driver: local

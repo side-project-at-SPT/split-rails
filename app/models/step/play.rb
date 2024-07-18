@@ -57,6 +57,28 @@ module Step
         'amount' => SHEEP_INITIAL_QUANTITY
       }
 
+      # Iterate through the target's neighbors and check if they are blocks the target
+      # FIXME: duplicated code, should be extracted to a method
+      # grabs the target grid and its neighbors
+      grids_to_check = Domain::Common.grid_and_its_neighbors_on_the_map(target, @previous_pastures)
+      @previous_pastures
+        # checks if the grid is exist in the map
+        .select { |g| grids_to_check.any? { |gtc| g['x'] == gtc['x'] && g['y'] == gtc['y'] } }
+        # checks if the grid is blocked
+        .each do |grid|
+        grid['is_blocked'] = (
+          # if the grid is not blank AND
+          grid['stack']['color'] != 'blank' && (
+            # if the grid is already blocked
+            grid['is_blocked'] ||
+            # if the grid has only one sheep
+            grid['stack']['amount'] == 1 ||
+            #  and all of its neighbors are captured
+            Domain::Common.all_neighbors_capture?(grid, @previous_pastures)
+          )
+        )
+      end
+
       # write to game_data
 
       # @game_data[:step] = @game.steps.count

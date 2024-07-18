@@ -79,6 +79,11 @@ module Step
         )
       end
 
+      if @previous_pastures.any? { |g| g['is_blocked'] }
+        Rails.logger.info { 'The following pastures are blocked' }
+        Rails.logger.info { @previous_pastures.select { |g| g['is_blocked'] }.map { |g| [g['x'], g['y']] } }
+      end
+
       # write to game_data
 
       # @game_data[:step] = @game.steps.count

@@ -76,3 +76,6 @@ gem 'rspec-rails', '~> 6.1'
 gem 'rswag', '~> 2.13'
 
 gem 'jwt', '~> 2.8'
+
+# Use Rack::Attack to throttle and block abusive requests [https://github.com/rack/rack-attack]
+gem 'rack-attack', '~> 6.7.0'

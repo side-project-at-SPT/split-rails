@@ -27,6 +27,25 @@ module Api
           }
           ActionCable.server.broadcast 'lobby_channel', message
 
+          # Broadcast to user's room channel
+          if @user.room
+            message = {
+              event: 'room_updated',
+              id: @user.room.id,
+              name: @user.room.name,
+              players: @user.room.players.map do |player|
+                {
+                  id: player.id,
+                  nickname: player.nickname,
+                  character: player.character,
+                  is_ready: player.ready?
+                }
+              end,
+              status: @user.room.status
+            }
+            RoomChannel.broadcast_to @user.room, message
+          end
+
           render json: @user.read_preferences, status: :ok
         else
           render json: @user.errors, status: :unprocessable_entity

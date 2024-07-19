@@ -1,7 +1,7 @@
 # syntax = docker/dockerfile:1
 
 # Make sure RUBY_VERSION matches the Ruby version in .ruby-version and Gemfile
-ARG RUBY_VERSION=3.3.3
+ARG RUBY_VERSION=3.3.4
 FROM registry.docker.com/library/ruby:$RUBY_VERSION-slim as base
 
 # Rails app lives here
@@ -20,10 +20,6 @@ FROM base as build
 # Install packages needed to build gems
 RUN apt-get update -qq && \
     apt-get install --no-install-recommends -y build-essential git libpq-dev libvips pkg-config
-
-# # https://stackoverflow.com/a/78620570
-# RUN gem uninstall net-pop
-# RUN gem install net-pop
 
 # Install application gems
 COPY Gemfile Gemfile.lock ./
@@ -58,9 +54,6 @@ COPY --from=build /rails /rails
 RUN useradd rails --create-home --shell /bin/bash && \
     chown -R rails:rails db log storage tmp
 USER rails:rails
-
-# generate swagger docs
-# RUN sed -i -- "s,default: 'http://localhost:3000',default: 'https://spt-games-split.zeabur.app',g" swagger/v1/swagger.yaml
 
 # Entrypoint prepares the database.
 ENTRYPOINT ["/rails/bin/docker-entrypoint"]

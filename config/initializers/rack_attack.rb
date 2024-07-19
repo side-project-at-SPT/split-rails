@@ -12,7 +12,7 @@ class Rack::Attack
   # Ban if user login 10 times in 1 minute, for 5 minutes
   Rack::Attack.blocklist('blocklist') do |req|
     Rack::Attack::Allow2Ban.filter(req.ip, maxretry: 10, findtime: 1.minute, bantime: 5.minutes) do
-      if req.path == '/login' && req.post?
+      if req.path == '/api/v1/login' && req.post?
         req.ip
       end
     end

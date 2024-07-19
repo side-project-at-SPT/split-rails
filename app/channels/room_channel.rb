@@ -50,7 +50,14 @@ class RoomChannel < ApplicationCable::Channel
       }
     end
 
-    broadcast_to(room, { event: 'set_character', players: })
+    broadcast_to(
+      room,
+      {
+        event: 'room_updated',
+        players:,
+        status: room.status
+      }
+    )
   end
 
   def cancel_ready
@@ -64,13 +71,14 @@ class RoomChannel < ApplicationCable::Channel
     broadcast_to(
       room,
       {
-        event: 'cancel_ready',
+        event: 'room_updated',
         player: {
           id: current_user.id,
           nickname: current_user.nickname,
           character: current_user.character,
           is_ready: current_user.ready?
-        }
+        },
+        status: room.status
       }
     )
 
@@ -89,18 +97,17 @@ class RoomChannel < ApplicationCable::Channel
     reject and return if room.players.exclude?(current_user)
 
     current_user.reload.ready!
-    # current_user.reload
-    # room = current_user.room.reload
     broadcast_to(
       room,
       {
-        event: 'ready',
+        event: 'room_updated',
         player: {
           id: current_user.id,
           nickname: current_user.nickname,
           character: current_user.character,
           is_ready: current_user.ready?
-        }
+        },
+        status: room.status
       }
     )
 

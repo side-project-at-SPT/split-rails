@@ -68,16 +68,20 @@ class RoomChannel < ApplicationCable::Channel
 
     current_user.unready!
 
+    players = room.players.map do |player|
+      {
+        id: player.id,
+        nickname: player.nickname,
+        character: player.character,
+        is_ready: player.ready?
+      }
+    end
+
     broadcast_to(
       room,
       {
         event: 'room_updated',
-        player: {
-          id: current_user.id,
-          nickname: current_user.nickname,
-          character: current_user.character,
-          is_ready: current_user.ready?
-        },
+        players:,
         status: room.status
       }
     )
@@ -97,16 +101,20 @@ class RoomChannel < ApplicationCable::Channel
     reject and return if room.players.exclude?(current_user)
 
     current_user.reload.ready!
+    players = room.players.map do |player|
+      {
+        id: player.id,
+        nickname: player.nickname,
+        character: player.character,
+        is_ready: player.ready?
+      }
+    end
+
     broadcast_to(
       room,
       {
         event: 'room_updated',
-        player: {
-          id: current_user.id,
-          nickname: current_user.nickname,
-          character: current_user.character,
-          is_ready: current_user.ready?
-        },
+        players:,
         status: room.status
       }
     )

@@ -5,7 +5,6 @@ module Step
 
     attribute :step_type, String # 'place pasture', 'place stack', 'split stack'
     attribute :game_data # cache game data
-    # attribute :previous_game_data # cache game data
     attribute :previous_pastures # cache pastures
 
     attribute :original_grid, default: { x: 0, y: 0, color: 'white', quantity: 0 }

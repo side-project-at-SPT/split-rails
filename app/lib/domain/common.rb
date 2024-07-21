@@ -23,6 +23,17 @@ module Domain
           .map(&:with_indifferent_access)
       end
 
+      def connect_coordinates(coord_x:, coord_y:)
+        [
+          { x: coord_x + 1, y: coord_y },
+          { x: coord_x - 1, y: coord_y },
+          { x: coord_x, y: coord_y + 1 },
+          { x: coord_x, y: coord_y - 1 },
+          { x: coord_x + 1, y: coord_y - 1 },
+          { x: coord_x - 1, y: coord_y + 1 }
+        ]
+      end
+
       def grid_and_its_neighbors_on_the_map(grid, pastures)
         grid = grid.with_indifferent_access
         (

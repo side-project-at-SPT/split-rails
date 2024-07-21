@@ -33,7 +33,8 @@ module Step
 
       flag_on_going = true
 
-      case @step_type
+      # case @step_type
+      case @game.game_phase
       when 'place_pasture', 'place_stack'
         @game.current_player_index = (@game.current_player_index + 1) % @game.players.size
       when 'split_stack'

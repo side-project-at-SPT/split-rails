@@ -78,9 +78,7 @@ module Domain
           captured_pastures = pastures.select do |pasture|
             pasture['stack']['color'] == colors[current_player_index]
           end
-          available_pastures = captured_pastures.select do |pasture|
-            !pasture['is_blocked']
-          end
+          available_pastures = captured_pastures.reject { |pasture| pasture['is_blocked'] }
           counter += 1
         end
 

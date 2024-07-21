@@ -33,27 +33,30 @@ module Step
 
       flag_on_going = true
 
+      next_player_index = @game.current_player_index
+
       case @game.game_phase
       when 'build map'
         # do nothing
       when 'place_pasture', 'place_stack'
-        @game.current_player_index = (@game.current_player_index + 1) % @game.players.size
+        next_player_index = (next_player_index + 1) % @game.players.size
       when 'split_stack'
         next_player_index = Domain::Common.next_available_player_index(
-          current_player_index: @game.current_player_index,
+          current_player_index: next_player_index,
           colors: @game.players.map { |player| player['color'] },
           pastures: @previous_pastures
         )
-        if next_player_index == -1
-          flag_on_going = false
-        else
-          @game.current_player_index = next_player_index
-        end
+        flag_on_going = false if next_player_index == -1
       when 'initialize_map_by_system'
         # do nothing
       else
         Rails.logger.error "Invalid game phase: #{@game.game_phase}"
         raise 'Invalid game phase'
+      end
+
+      unless next_player_index == -1
+        @game.current_player_index = next_player_index
+        @game_data.current_player_index = next_player_index
       end
 
       @game.steps << @game_data

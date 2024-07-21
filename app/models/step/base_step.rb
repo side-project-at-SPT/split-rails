@@ -33,8 +33,9 @@ module Step
 
       flag_on_going = true
 
-      # case @step_type
       case @game.game_phase
+      when 'build map'
+        # do nothing
       when 'place_pasture', 'place_stack'
         @game.current_player_index = (@game.current_player_index + 1) % @game.players.size
       when 'split_stack'
@@ -51,8 +52,8 @@ module Step
       when 'initialize_map_by_system'
         # do nothing
       else
-        Rails.logger.error "Invalid step type: #{@step_type}"
-        raise 'Invalid step type'
+        Rails.logger.error "Invalid game phase: #{@game.game_phase}"
+        raise 'Invalid game phase'
       end
 
       @game.steps << @game_data

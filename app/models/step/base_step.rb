@@ -35,7 +35,7 @@ module Step
 
       next_player_index = @game.current_player_index
 
-      case @game.game_phase
+      case @game_data.game_phase
       when 'build map'
         # do nothing
       when 'place_pasture', 'place_stack'

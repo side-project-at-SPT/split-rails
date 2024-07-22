@@ -12,6 +12,33 @@ module Api
         render status: :ok
       end
 
+      def me_via_gaas_token
+        auth0_token = @jwt_request['gaas_auth0_token']
+
+        if auth0_token.nil?
+          return render json: {
+            error: 'Do not have the gaas auth0 token to get user info'
+          }, status: :unauthorized
+        end
+
+        uri = URI(Api::JsonWebToken::GAAS_USERS_ME_API)
+        req = Net::HTTP::Get.new uri
+        req['Authorization'] = "Bearer #{auth0_token}"
+        res = Net::HTTP.start(uri.host, uri.port, use_ssl: true) do |http|
+          http.request req
+        end
+
+        return render json: res.body, status: :ok if res.code.to_i.between?(200, 299)
+
+        Rails.logger.warn { "Failed to get user info: #{res.code}" }
+        begin
+          message = JSON.parse(res.body)
+          Rails.logger.debug { message }
+        rescue StandardError => e
+          Rails.logger.error { e }
+        end
+      end
+
       def login_via_gaas_token
         # auth0_token = params.fetch(:token)
         # via bearer token

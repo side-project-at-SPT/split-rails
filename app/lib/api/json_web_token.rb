@@ -1,11 +1,12 @@
 module Api
   class JsonWebToken
-    BASE_ISSUER = ENV.fetch('ZEABUR_web_URL') { 'http://localhost:3000/' }
+    BASE_ISSUER = ENV.fetch('ZEABUR_WEB_URL') { 'http://localhost:3000/' }
     GAAS_ISSUER = 'https://dev-1l0ixjw8yohsluoi.us.auth0.com/'.freeze
     GAAS_USERS_ME_API = 'https://api.gaas.waterballsa.tw/users/me'.freeze
+    JWT_EXPIRATION = ENV.fetch('JWT_EXPIRATION') { 1.hours.to_i }
 
     class << self
-      def encode(payload, exp = 1.hours.from_now)
+      def encode(payload, exp = JWT_EXPIRATION.from_now)
         payload[:exp] = exp.to_i
         payload[:iss] = BASE_ISSUER
         JWT.encode(payload, ENV.fetch('JWT_SECRET') { 'secret' })

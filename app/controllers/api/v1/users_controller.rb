@@ -111,6 +111,14 @@ module Api
 
       # GET /api/v1/me
       def show
+        # pp "ZEABUR_web_URL: #{ENV.fetch('ZEABUR_web_URL') { '' }}"
+        # pp "ZEABUR_WEB_URL: #{ENV.fetch('ZEABUR_WEB_URL') { '' }}"
+        # pp "ZEABUR_WEB_DOMAIN: #{ENV.fetch('ZEABUR_WEB_DOMAIN') { '' }}"
+        Rails.logger.warn { 'print ENV' }
+        Rails.logger.warn { "ZEABUR_web_URL: #{ENV.fetch('ZEABUR_web_URL') { '' }}" }
+        Rails.logger.warn { "ZEABUR_WEB_URL: #{ENV.fetch('ZEABUR_WEB_URL') { '' }}" }
+        Rails.logger.warn { "ZEABUR_WEB_DOMAIN: #{ENV.fetch('ZEABUR_WEB_DOMAIN') { '' }}" }
+
         # TODO: error handling
         unless @jwt_request['sub']
           return render json: {

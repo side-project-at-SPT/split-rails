@@ -111,6 +111,13 @@ module Api
 
       # GET /api/v1/me
       def show
+        # TODO: error handling
+        unless @jwt_request['sub']
+          return render json: {
+            error: 'No sub in the token'
+          }, status: :unauthorized
+        end
+
         user = Visitor.find(@jwt_request['sub'])
 
         render json: { name: user.name }, status: :ok

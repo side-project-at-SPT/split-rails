@@ -4,6 +4,10 @@ module Api
     GAAS_ISSUER = 'https://dev-1l0ixjw8yohsluoi.us.auth0.com/'.freeze
     GAAS_USERS_ME_API = 'https://api.gaas.waterballsa.tw/users/me'.freeze
 
+    pp "BASE_ISSUER: #{BASE_ISSUER}"
+    pp "ZEABUR_WEB_URL: #{ENV.fetch('ZEABUR_WEB_URL') { '' }}"
+    pp "ZEABUR_WEB_DOMAIN: #{ENV.fetch('ZEABUR_WEB_DOMAIN') { '' }}"
+
     class << self
       def encode(payload, exp = 1.hours.from_now)
         payload[:exp] = exp.to_i

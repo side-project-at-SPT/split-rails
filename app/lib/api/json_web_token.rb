@@ -6,7 +6,7 @@ module Api
     JWT_EXPIRATION = ENV.fetch('JWT_EXPIRATION') { 1.hours.to_i }
 
     class << self
-      def encode(payload, exp = JWT_EXPIRATION.from_now)
+      def encode(payload, exp = JWT_EXPIRATION.seconds.from_now)
         payload[:exp] = exp.to_i
         payload[:iss] = BASE_ISSUER
         JWT.encode(payload, ENV.fetch('JWT_SECRET') { 'secret' })
@@ -63,6 +63,7 @@ module Api
 
           decoded
         when BASE_ISSUER
+          Rails.logger.warn { 'try to decode the token' }
           body = JWT.decode(token, ENV.fetch('JWT_SECRET') { 'secret' })[0]
           HashWithIndifferentAccess.new body
         end

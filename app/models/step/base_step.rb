@@ -33,20 +33,20 @@ module Step
 
       flag_on_going = true
 
-      next_player_index = @game.current_player_index
+      memo_current_player_index = @game.current_player_index
 
       case @game_data.game_phase
       when 'build map'
         # do nothing
       when 'place_pasture', 'place_stack'
-        next_player_index = (next_player_index + 1) % @game.players.size
+        next_player_index = (memo_current_player_index + 1) % @game.players.size
       when 'split_stack'
         next_player_index = Domain::Common.next_available_player_index(
-          current_player_index: next_player_index,
+          current_player_index: memo_current_player_index,
           colors: @game.players.map { |player| player['color'] },
           pastures: @previous_pastures
         )
-        flag_on_going = false if next_player_index == -1
+        flag_on_going = false if next_player_index == -1 || next_player_index == memo_current_player_index
       when 'initialize_map_by_system'
         # do nothing
       else

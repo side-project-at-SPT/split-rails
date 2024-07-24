@@ -38,15 +38,7 @@ class Room < ApplicationRecord
     closed_at.present?
   end
 
-  def close
-    return nil if closed?
-
-    self.closed_at = Time.current
-    self.players = []
-    save!
-
-    pp @jwt_request
-    auth0_token = @jwt_request[:gaas_auth0_token]
+  def call_gaas_end_game(auth0_token)
     room_id = $redis.get("gaas_room_id_of:#{params[:id]}")
     return unless room_id
 
@@ -62,6 +54,14 @@ class Room < ApplicationRecord
       # do not raise error, just log it
       Rails.logger.warn { "Failed to end game #{res.body}" }
     end
+  end
+
+  def close
+    return nil if closed?
+
+    self.closed_at = Time.current
+    self.players = []
+    save!
   end
 
   def ready_to_start?

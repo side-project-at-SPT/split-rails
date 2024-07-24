@@ -45,7 +45,8 @@ module Api
                         status: :unauthorized
         end
 
-        Room.find_by(id: params[:id]).close
+        room.call_gaas_end_game(@jwt_request[:gaas_auth0_token])
+        room.close
 
         Domain::CloseRoomEvent.new(room_id: params[:id]).dispatch
 

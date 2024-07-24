@@ -61,7 +61,7 @@ module Api
           $redis.set(key, decoded.to_json)
           $redis.expire(key, payload['exp'] - Time.now.to_i + 5) # 5 seconds earlier
 
-          decoded
+          HashWithIndifferentAccess.new decoded
         when BASE_ISSUER
           Rails.logger.warn { 'try to decode the token' }
           body = JWT.decode(token, ENV.fetch('JWT_SECRET') { 'secret' })[0]

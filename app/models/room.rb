@@ -45,6 +45,7 @@ class Room < ApplicationRecord
     self.players = []
     save!
 
+    pp @jwt_request
     auth0_token = @jwt_request[:gaas_auth0_token]
     room_id = $redis.get("gaas_room_id_of:#{params[:id]}")
     return unless room_id

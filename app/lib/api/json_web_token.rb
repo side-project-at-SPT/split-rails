@@ -27,8 +27,10 @@ module Api
         when GAAS_ISSUER
           # try to get the decoded token from redis
           key = Digest::SHA256.hexdigest(token).prepend('gaas:auth0_token:')
-          decoded = $redis.get(key)
-          return JSON.parse(decoded) if decoded
+
+          # TODO: try to find a way to cache the decoded token
+          # decoded = $redis.get(key)
+          # return JSON.parse(decoded) if decoded
 
           uri = URI(GAAS_USERS_ME_API)
           req = Net::HTTP::Get.new uri
@@ -56,10 +58,12 @@ module Api
             'sub' => user.id,
             'gaas_auth0_token' => token
           }
-          # use redis to cache the decoded token
-          # key = Digest::SHA256.hexdigest(token).prepend('gaas:auth0_token:')
-          $redis.set(key, decoded.to_json)
-          $redis.expire(key, payload['exp'] - Time.now.to_i + 5) # 5 seconds earlier
+
+          # TODO: try to find a way to cache the decoded token
+          # # use redis to cache the decoded token
+          # # key = Digest::SHA256.hexdigest(token).prepend('gaas:auth0_token:')
+          # $redis.set(key, decoded.to_json)
+          # $redis.expire(key, payload['exp'] - Time.now.to_i + 5) # 5 seconds earlier
 
           HashWithIndifferentAccess.new decoded
         when BASE_ISSUER

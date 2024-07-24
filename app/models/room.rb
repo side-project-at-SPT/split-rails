@@ -39,7 +39,7 @@ class Room < ApplicationRecord
   end
 
   def call_gaas_end_game(auth0_token)
-    room_id = $redis.get("gaas_room_id_of:#{params[:id]}")
+    room_id = $redis.get("gaas_room_id_of:#{id}")
     return unless room_id
 
     uri = URI("https://api.gaas.waterballsa.tw/rooms/#{room_id}:endGame")

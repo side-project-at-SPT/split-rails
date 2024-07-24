@@ -44,6 +44,23 @@ class Room < ApplicationRecord
     self.closed_at = Time.current
     self.players = []
     save!
+
+    auth0_token = @jwt_request[:gaas_auth0_token]
+    room_id = $redis.get("gaas_room_id_of:#{params[:id]}")
+    return unless room_id
+
+    uri = URI("https://api.gaas.waterballsa.tw/rooms/#{room_id}:endGame")
+    req = Net::HTTP::Post.new uri
+    req['Authorization'] = "Bearer #{auth0_token}"
+    res = Net::HTTP.start(uri.host, uri.port, use_ssl: true) do |http|
+      http.request req
+    end
+    if res.code.to_i.between?(200, 299)
+      # render json: { message: 'Game ended' }, status: :ok
+    else
+      # do not raise error, just log it
+      Rails.logger.warn { "Failed to end game #{res.body}" }
+    end
   end
 
   def ready_to_start?

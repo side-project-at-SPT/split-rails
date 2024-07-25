@@ -5,8 +5,11 @@ Rails.application.routes.draw do
   namespace :api do
     namespace :v1 do
       resources :users, only: %i[create index] do
-        post 'login-via-gaas-token', on: :collection
-        get 'me-via-gaas-token', on: :collection
+        collection do
+          post 'login-as-visitor'
+          post 'login-via-gaas-token'
+          get 'me-via-gaas-token'
+        end
       end
       get 'me', to: 'users#show'
       resource :preferences, only: %i[show update]

@@ -46,7 +46,8 @@ class RoomChannel < ApplicationCable::Channel
         id: player.id,
         nickname: player.nickname,
         character: player.character,
-        is_ready: player.ready?
+        is_ready: player.ready?,
+        role: player.role
       }
     end
 
@@ -73,7 +74,8 @@ class RoomChannel < ApplicationCable::Channel
         id: player.id,
         nickname: player.nickname,
         character: player.character,
-        is_ready: player.ready?
+        is_ready: player.ready?,
+        role: player.role
       }
     end
 
@@ -106,7 +108,8 @@ class RoomChannel < ApplicationCable::Channel
         id: player.id,
         nickname: player.nickname,
         character: player.character,
-        is_ready: player.ready?
+        is_ready: player.ready?,
+        role: player.role
       }
     end
 
@@ -131,6 +134,12 @@ class RoomChannel < ApplicationCable::Channel
     end
 
     room.start_new_game
+
+    # let players in the room change their ready status to false
+    Visitor.where(room_id: room.id).each(&:unready!)
+    # check if all players are unready
+    # TODO: remove this line after testing
+    Rails.logger.warn { "All players are unready? #{room.players.reload.all?(&:unready?)}" }
 
     broadcast_to(room, { event: 'game_started', game_id: room.games.last.id })
     dispatch_to_lobby('game_started', room)
@@ -162,7 +171,8 @@ class RoomChannel < ApplicationCable::Channel
                      id: player.id,
                      nickname: player.nickname,
                      character: player.character,
-                     is_ready: player.ready?
+                     is_ready: player.ready?,
+                     role: player.role
                    }
                  })
     dispatch_to_lobby('join_room', room)
@@ -176,7 +186,8 @@ class RoomChannel < ApplicationCable::Channel
                      id: player.id,
                      nickname: player.nickname,
                      character: player.character,
-                     is_ready: player.ready?
+                     is_ready: player.ready?,
+                     role: player.role
                    }
                  })
     dispatch_to_lobby('leave_room', room)
@@ -209,7 +220,8 @@ class RoomChannel < ApplicationCable::Channel
                          id: player.id,
                          nickname: player.nickname,
                          character: player.character,
-                         is_ready: player.ready?
+                         is_ready: player.ready?,
+                         role: player.role
                        }
                      end
           },

@@ -158,6 +158,7 @@ class Game < ApplicationRecord
         json.nickname player['nickname']
         json.color player['color']
         json.character player['character']
+        json.role player['role']
       end
     end.attributes!
   end

@@ -5,5 +5,6 @@ json.players room.players do |player|
   json.nickname player.nickname
   json.character player.character
   json.is_ready player.ready?
+  json.role player.role
 end
 json.status room.status

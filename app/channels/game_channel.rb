@@ -15,7 +15,7 @@ class GameChannel < ApplicationCable::Channel
   end
 
   def receive(data)
-    self.broadcast_to(@game, data)
+    broadcast_to(@game, data)
   end
 
   def echo(data)
@@ -123,7 +123,8 @@ class GameChannel < ApplicationCable::Channel
         nickname: player['nickname'],
         color: player['color'],
         character: player['character'],
-        is_connected: player_is_connected?(@game.id, player['id'])
+        is_connected: player_is_connected?(@game.id, player['id']),
+        role: player['role']
       }
     end
   end

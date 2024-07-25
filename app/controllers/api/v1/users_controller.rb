@@ -3,13 +3,24 @@ module Api
     class UsersController < BaseController
       require 'net/http'
 
-      skip_before_action :load_jwt_request, only: %i[create login_via_gaas_token]
+      skip_before_action :load_jwt_request, only: %i[create login_via_gaas_token login_as_visitor]
 
       # GET /api/v1/users
       def index
         @users = Visitor.all
 
         render status: :ok
+      end
+
+      def login_as_visitor
+        user = Visitor.create!(
+          name: "guest_#{Time.now.strftime('%Y%m%d')}_#{SecureRandom.alphanumeric(10)}",
+          password: SecureRandom.alphanumeric(16),
+          role: :guest
+        )
+        user.update!(preferences: { nickname: 'guest' })
+
+        render json: { token: user.encode_jwt }, status: :ok
       end
 
       def me_via_gaas_token
@@ -74,6 +85,7 @@ module Api
         user = Visitor.find_or_initialize_by(name: message['id'])
         if user.new_record?
           user.password = SecureRandom.alphanumeric(16)
+          user.role = :user
           user.save!
           user.update!(preferences: { nickname: message['nickname'] || 'player from gaas' })
         end
@@ -99,6 +111,7 @@ module Api
                           status: :bad_request
           end
           user.password = password
+          user.role = :user
           user.save!
 
           return render json: { token: user.encode_jwt }, status: :created

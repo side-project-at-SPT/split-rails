@@ -7,6 +7,7 @@ class Room < ApplicationRecord
 
   COLOR = %w[red blue green yellow orange].freeze
 
+  # TODO: move to Game model
   def generate_players(seed: 13)
     ret = []
     colors = COLOR.shuffle
@@ -15,13 +16,15 @@ class Room < ApplicationRecord
         id: player.id,
         nickname: player.nickname,
         color: colors[i],
-        character: player.character
+        character: player.character,
+        role: player.role
       }
     end
 
     ret
   end
 
+  # TODO: move to Game model
   def start_new_game
     game = Game.create do |g|
       seed = created_at.to_i

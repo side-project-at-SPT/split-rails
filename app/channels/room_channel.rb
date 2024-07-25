@@ -136,7 +136,7 @@ class RoomChannel < ApplicationCable::Channel
     room.start_new_game
 
     # let players in the room change their ready status to false
-    Visitor.where(room_id: room.id).each(&:unready!)
+    room.players.reload.each(&:unready!)
     # check if all players are unready
     # TODO: remove this line after testing
     Rails.logger.warn { "All players are unready? #{room.players.reload.all?(&:unready?)}" }

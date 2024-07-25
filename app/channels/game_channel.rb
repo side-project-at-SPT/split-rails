@@ -12,6 +12,7 @@ class GameChannel < ApplicationCable::Channel
     # Any cleanup needed when channel is unsubscribed
 
     player_left_game @game.id, current_user.id
+    stop_all_streams
   end
 
   def receive(data)

@@ -21,7 +21,7 @@ class RoomChannel < ApplicationCable::Channel
     end
 
     room_leave_with(room, current_user)
-    # stop_all_streams
+    stop_all_streams
   end
 
   def receive(data)

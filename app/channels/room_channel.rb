@@ -41,24 +41,7 @@ class RoomChannel < ApplicationCable::Channel
     current_user.character = character
     current_user.save
 
-    players = room.players.map do |player|
-      {
-        id: player.id,
-        nickname: player.nickname,
-        character: player.character,
-        is_ready: player.ready?,
-        role: player.role
-      }
-    end
-
-    broadcast_to(
-      room,
-      {
-        event: 'room_updated',
-        players:,
-        status: room.status
-      }
-    )
+    dispatch_to_room('room_updated', room)
   end
 
   def cancel_ready
@@ -69,24 +52,7 @@ class RoomChannel < ApplicationCable::Channel
 
     current_user.unready!
 
-    players = room.players.map do |player|
-      {
-        id: player.id,
-        nickname: player.nickname,
-        character: player.character,
-        is_ready: player.ready?,
-        role: player.role
-      }
-    end
-
-    broadcast_to(
-      room,
-      {
-        event: 'room_updated',
-        players:,
-        status: room.status
-      }
-    )
+    dispatch_to_room('room_updated', room)
 
     # there is game starting
     return unless room.start_in_seconds.positive?
@@ -103,24 +69,8 @@ class RoomChannel < ApplicationCable::Channel
     reject and return if room.players.exclude?(current_user)
 
     current_user.reload.ready!
-    players = room.players.map do |player|
-      {
-        id: player.id,
-        nickname: player.nickname,
-        character: player.character,
-        is_ready: player.ready?,
-        role: player.role
-      }
-    end
 
-    broadcast_to(
-      room,
-      {
-        event: 'room_updated',
-        players:,
-        status: room.status
-      }
-    )
+    dispatch_to_room('room_updated', room)
 
     return unless room.ready_to_start?
 
@@ -165,31 +115,14 @@ class RoomChannel < ApplicationCable::Channel
 
     room.players << player unless room.players.include?(player)
 
-    broadcast_to(room, {
-                   event: 'join_room',
-                   player: {
-                     id: player.id,
-                     nickname: player.nickname,
-                     character: player.character,
-                     is_ready: player.ready?,
-                     role: player.role
-                   }
-                 })
+    dispatch_to_room('room_updated', room)
     dispatch_to_lobby('join_room', room)
   end
 
   def room_leave_with(room, player)
     room.players.delete(player)
-    broadcast_to(room, {
-                   event: 'leave_room',
-                   player: {
-                     id: player.id,
-                     nickname: player.nickname,
-                     character: player.character,
-                     is_ready: player.ready?,
-                     role: player.role
-                   }
-                 })
+
+    dispatch_to_room('room_updated', room)
     dispatch_to_lobby('leave_room', room)
   end
 
@@ -228,5 +161,19 @@ class RoomChannel < ApplicationCable::Channel
           status: room.status
         }
       )
+  end
+
+  def dispatch_to_room(event, room)
+    players = room.players.map do |rp|
+      {
+        id: rp.id,
+        nickname: rp.nickname,
+        character: rp.character,
+        is_ready: rp.ready?,
+        role: rp.role
+      }
+    end
+
+    broadcast_to(room, { event:, players:, status: room.status })
   end
 end

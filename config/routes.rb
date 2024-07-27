@@ -14,10 +14,9 @@ Rails.application.routes.draw do
       get 'me', to: 'users#show'
       resource :preferences, only: %i[show update]
 
-      post 'rooms/:id/close', to: 'rooms#destroy'
       resources :rooms, only: %i[index show create] do
         member do
-          # get 'game', to: 'games#show'
+          post 'close', to: 'rooms#destroy'
           post 'game', to: 'games#create'
           delete 'game', to: 'games#destroy'
           post 'game/split', to: 'games#split'

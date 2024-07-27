@@ -26,7 +26,7 @@ module Api
         case payload['iss']
         when GAAS_ISSUER
           # try to get the decoded token from redis
-          key = Digest::SHA256.hexdigest(token).prepend('gaas:auth0_token:')
+          # key = Digest::SHA256.hexdigest(token).prepend('gaas:auth0_token:')
 
           # TODO: try to find a way to cache the decoded token
           # decoded = $redis.get(key)
@@ -67,7 +67,7 @@ module Api
 
           HashWithIndifferentAccess.new decoded
         when BASE_ISSUER
-          Rails.logger.warn { 'try to decode the token' }
+          Rails.logger.debug { 'try to decode the token' }
           body = JWT.decode(token, ENV.fetch('JWT_SECRET') { 'secret' })[0]
           HashWithIndifferentAccess.new body
         end

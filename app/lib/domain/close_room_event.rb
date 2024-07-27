@@ -13,5 +13,20 @@ module Domain
     def event_type
       'room_closed'.freeze
     end
+
+    def dispatch
+      # to room channel
+      Room.find(params[:room_id])
+          .then do |room|
+        RoomChannel.broadcast_to(
+          room, {
+            event: event_type
+          }
+        )
+      end
+
+      # to lobby channel
+      super
+    end
   end
 end

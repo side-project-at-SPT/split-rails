@@ -36,7 +36,7 @@ module Step
       memo_current_player_index = @game.current_player_index
 
       case @game_data.game_phase
-      when 'build map'
+      when 'initialize_map_by_system', 'build map'
         # do nothing
       when 'place_pasture', 'place_stack'
         next_player_index = (memo_current_player_index + 1) % @game.players.size
@@ -46,9 +46,18 @@ module Step
           colors: @game.players.map { |player| player['color'] },
           pastures: @previous_pastures
         )
-        flag_on_going = false if next_player_index == -1 || next_player_index == memo_current_player_index
-      when 'initialize_map_by_system'
-        # do nothing
+        # if next_player_index == -1, no player can play, game over
+        # if next_player_index == memo_current_player_index, need to check if current player occupied maximum pastures
+        if next_player_index == -1 || (
+          next_player_index == memo_current_player_index && (
+            # there is only 1 player has the maximum pastures
+            @previous_pastures.map do |pasture|
+              pasture['stack']['color'] == 'blank' ? nil : pasture['stack']['color']
+            end.compact.tally.group_by(&:last).max_by(&:first).last.size == 1
+          )
+        )
+          flag_on_going = false
+        end
       else
         Rails.logger.error "Invalid game phase: #{@game.game_phase}"
         raise 'Invalid game phase'
@@ -85,6 +94,7 @@ module Step
     end
 
     def place_pasture
+      raise 'Not implemented'
       # place pasture
       # check if the pasture is blocked
       # if not, place the pasture

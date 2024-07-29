@@ -89,7 +89,7 @@ class RoomChannel < ApplicationCable::Channel
     room.players.reload.each(&:unready!)
     # check if all players are unready
     # TODO: remove this line after testing
-    Rails.logger.warn { "All players are unready? #{room.players.reload.none?(&:ready?)}" }
+    Rails.logger.info { "All players are unready? #{room.players.reload.none?(&:ready?)}" }
 
     broadcast_to(room, { event: 'game_started', game_id: room.games.last.id })
     dispatch_to_lobby('game_started', room)

@@ -13,7 +13,7 @@ module ApplicationCable
 
     def disconnect
       # Any cleanup work needed when the cable connection is cut.
-      $redis.del("used:#{current_user.id}:gaas_auth0_token")
+      $redis.del("used:#{current_user.id}:gaas_auth0_token") if current_user
     end
 
     private

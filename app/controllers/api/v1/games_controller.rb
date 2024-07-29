@@ -10,19 +10,20 @@ module Api
       skip_before_action :load_jwt_request, only: %i[create end_game_via_gaas_token]
 
       # POST /api/v1/games
-      # 開始遊戲
+      # currently the api only used for game_as_a_service to start a game
+      # it will create a room and return the room url
       def create
         # print auth info in request header
         Rails.logger.debug { "Authorization: #{request.headers['Authorization']}" }
 
         # parse params
-        Rails.logger.warn { "roomId: #{params['roomId']}" }
+        Rails.logger.info { "roomId: #{params['roomId']}" }
         players = params['players']
-        Rails.logger.warn { 'players is empty' } if players.empty?
+        Rails.logger.info { 'players is empty' } if players.empty?
         players.each do |player|
-          Rails.logger.warn { 'player' }
-          Rails.logger.warn { "id: #{player['id']}" }
-          Rails.logger.warn { "nickName: #{player['nickName']}" }
+          Rails.logger.info { 'player' }
+          Rails.logger.info { "id: #{player['id']}" }
+          Rails.logger.info { "nickName: #{player['nickName']}" }
         end
 
         room = Room.create!(name: "#{params['players'][0]['nickName']}'s Room")

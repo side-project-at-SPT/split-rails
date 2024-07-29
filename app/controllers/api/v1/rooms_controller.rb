@@ -33,6 +33,22 @@ module Api
 
       # DELETE /api/v1/rooms/:id/close
       # 關閉房間
+      # issue #10: while closing room, call gaas end game if possible
+      # situation:
+      #   1. room is not hosted by gaas player
+      #     => won't call gaas end game
+      #   2. room is hosted by gaas player
+      #     => api called by gaas player
+      #     => call gaas end game
+      #   3. room is hosted by gaas player
+      #     => api called by non-gaas player
+      #     => use reserve gaas token to call gaas end game
+      # changes:
+      #   when room created, save open_by_gaas in redis if room is hosted via gaas
+      #     => save open_by_gaas in redis: type: str, key 'room:#{room.id}:open_by_gaas', value: true/false
+      #   when player join room, save gaas_token in redis if room is hosted by gaas player && player is gaas player
+      #     => save gaas_token in redis: type: list, key 'room:#{room.id}:gaas_tokens', value: [gaas_token1, gaas_token2, ...]
+      #   when close room, call gaas end game if possible
       def destroy
         room = Room.find_by(id: params[:id])
         return render json: { error: 'Room not found' }, status: :not_found unless room

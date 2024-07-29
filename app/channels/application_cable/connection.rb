@@ -11,6 +11,11 @@ module ApplicationCable
       end
     end
 
+    def disconnect
+      # Any cleanup work needed when the cable connection is cut.
+      $redis.del("used:#{current_user.id}:gaas_auth0_token")
+    end
+
     private
 
     def find_verified_user
@@ -28,6 +33,7 @@ module ApplicationCable
         Rails.logger.debug { 'try to find the user' }
 
         if (current_user = Visitor.find_by(id: decoded_token[:sub]))
+          $redis.set("used:#{current_user.id}:gaas_auth0_token", token) if decoded_token[:gaas_auth0_token]
           return current_user
         end
       end

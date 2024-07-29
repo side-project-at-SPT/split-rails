@@ -45,18 +45,32 @@ class Room < ApplicationRecord
     room_id = $redis.get("gaas_room_id_of:#{id}")
     return unless room_id
 
-    uri = URI("https://api.gaas.waterballsa.tw/rooms/#{room_id}:endGame")
-    req = Net::HTTP::Post.new uri
-    req['Authorization'] = "Bearer #{auth0_token}"
-    res = Net::HTTP.start(uri.host, uri.port, use_ssl: true) do |http|
-      http.request req
+    token_to_close_room = if auth0_token.nil?
+                            # use reserve gaas token to call gaas end game
+                            $redis.lrange("room:#{id}:gaas_tokens", 0, -1)
+                          else
+                            [auth0_token]
+                          end
+
+    token_to_close_room.each do |token|
+      uri = URI("https://api.gaas.waterballsa.tw/rooms/#{room_id}:endGame")
+      req = Net::HTTP::Post.new uri
+      req['Authorization'] = "Bearer #{token}"
+      res = Net::HTTP.start(uri.host, uri.port, use_ssl: true) do |http|
+        http.request req
+      end
+      if res.code.to_i.between?(200, 299)
+        $redis.del("gaas_room_id_of:#{id}")
+        $redis.del("room:#{id}:gaas_tokens")
+        Rails.logger.warn { "Successfully end game #{res.body}" }
+        return 0
+      else
+        # do not raise error, just log it
+        Rails.logger.warn { "Failed to end game #{res.body}" }
+      end
     end
-    if res.code.to_i.between?(200, 299)
-      # render json: { message: 'Game ended' }, status: :ok
-    else
-      # do not raise error, just log it
-      Rails.logger.warn { "Failed to end game #{res.body}" }
-    end
+
+    Rails.logger.warn { 'Failed to end game' }
   end
 
   def close

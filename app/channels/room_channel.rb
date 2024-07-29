@@ -113,7 +113,12 @@ class RoomChannel < ApplicationCable::Channel
   def room_join_with(room, player)
     reject and return if room.players.include?(player)
 
-    room.players << player unless room.players.include?(player)
+    room.players << player
+
+    # if room is hosted via gaas and player is gaas player, save gaas_token in redis
+    if $redis.get("gaas_room_id_of:#{room.id}") && (token_to_close_room = $redis.get("user:#{player.id}:gaas_auth0_token"))
+      $redis.rpush("room:#{room.id}:gaas_tokens", token_to_close_room)
+    end
 
     dispatch_to_room('room_updated', room)
     dispatch_to_lobby('join_room', room)

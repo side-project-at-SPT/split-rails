@@ -11,7 +11,7 @@ module Api
       end
 
       def render_parameter_missing(exception)
-        render json: { errors: exception.message }, status: :bad_request
+        render json: { error: exception.message }, status: :bad_request
       end
 
       private
@@ -22,18 +22,18 @@ module Api
           if @user
             @jwt_request = { 'sub' => @user.id }
           else
-            render json: { errors: 'Failed to authenticate' }, status: :unauthorized
+            render json: { error: 'Failed to authenticate' }, status: :unauthorized
           end
         else
           header = request.headers['Authorization']
-          return render json: { errors: 'Failed to authenticate' }, status: :unauthorized unless header
+          return render json: { error: 'Failed to authenticate' }, status: :unauthorized unless header
 
           decoded = header.gsub(/^Bearer /, '')
 
           begin
             @jwt_request = Api::JsonWebToken.decode(decoded)
           rescue JWT::DecodeError
-            render json: { errors: 'Failed to authenticate' }, status: :unauthorized
+            render json: { error: 'Failed to authenticate' }, status: :unauthorized
           end
         end
       end

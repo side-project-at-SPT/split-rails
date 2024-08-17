@@ -5,7 +5,7 @@ class Room < ApplicationRecord
 
   validates :name, presence: true
 
-  COLOR = %w[red blue green yellow orange].freeze
+  COLOR = %w[red blue green yellow].freeze
 
   # TODO: move to Game model
   def generate_players(seed: 13)

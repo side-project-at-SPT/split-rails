@@ -120,4 +120,8 @@ class Room < ApplicationRecord
       'waiting'
     end
   end
+
+  def full?
+    players.size >= 4
+  end
 end

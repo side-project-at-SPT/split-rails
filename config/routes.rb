@@ -21,6 +21,7 @@ Rails.application.routes.draw do
           delete 'game', to: 'games#destroy'
           post 'game/split', to: 'games#split'
           post 'game/play-unit', to: 'games#play'
+          post 'ai_players', to: 'rooms#add_ai_players'
         end
       end
       resources :games, only: %i[show destroy create] do

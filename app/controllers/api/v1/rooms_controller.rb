@@ -68,6 +68,35 @@ module Api
 
         head :ok
       end
+
+      # POST /api/v1/rooms/:id/ai_players
+      # Add a random AI player to the room
+      # constraints:
+      #  1. request user must be in the same room
+      def add_ai_players
+        room = Room.find_by(id: params[:id])
+        return render json: { error: 'Room not found' }, status: :not_found unless room
+
+        user = Visitor.find(@jwt_request['sub'])
+        unless room.players.include?(user)
+          return render json: { error: 'You are not in this room' },
+                        status: :unauthorized
+        end
+
+        # if room is full, return error
+        return render json: { error: 'Room is full' }, status: :unprocessable_entity if room.full?
+
+        ai_player = Visitor.where.not(id: room.players.pluck(:id)).role_ai.sample
+        return render json: { error: 'AI player not found' }, status: :not_found unless ai_player
+
+        Domain::Room::Command::AddAi.new(room:, ai_player:).call
+
+        render json: {
+          message: 'AI player added to the room',
+          room_id: room.id,
+          ai_player_id: ai_player.id
+        }
+      end
     end
   end
 end

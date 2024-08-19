@@ -9,7 +9,10 @@ class Domain::Room::Command::AddAi
   end
 
   def call
-    @room.visitors << @ai_player
+    @room.players << @ai_player
+
+    # get ready
+    @ai_player.ready!
 
     # notify lobby channel
     dispatch_to_lobby('join_room', @room)

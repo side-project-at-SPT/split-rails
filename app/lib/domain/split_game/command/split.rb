@@ -47,8 +47,8 @@ class Domain::SplitGame::Command::Split
       @game.split_stack(
         origin_x: original_grid['x'],
         origin_y: original_grid['y'],
-        destination_x: grid['x'],
-        destination_y: grid['y'],
+        target_x: grid['x'],
+        target_y: grid['y'],
         target_amount: original_grid['stack']['amount'] / 2
       )
     end

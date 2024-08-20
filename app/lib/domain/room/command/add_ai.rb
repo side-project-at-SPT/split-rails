@@ -14,6 +14,8 @@ class Domain::Room::Command::AddAi
     # get ready
     @ai_player.ready!
 
+    @room.reload
+
     # notify lobby channel
     dispatch_to_lobby('join_room', @room)
     # notify room channel

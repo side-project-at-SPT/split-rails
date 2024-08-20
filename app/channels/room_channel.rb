@@ -93,6 +93,10 @@ class RoomChannel < ApplicationCable::Channel
 
     broadcast_to(room, { event: 'game_started', game_id: room.games.last.id })
     dispatch_to_lobby('game_started', room)
+
+    # trigger the first player to make a move
+    current_player = room.games.last.current_player
+    Domain::Game::Command::Play.new(game: room.games.last, player: current_player).call
   end
 
   def close_game

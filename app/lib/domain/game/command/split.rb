@@ -21,7 +21,7 @@ class Domain::Game::Command::Split
     end
 
     # if the player is not a ai player, reject
-    unless @player.ai?
+    unless @player['role'] == 'ai'
       Rails.logger.info { 'The player is not an AI player' }
       return
     end
@@ -32,7 +32,7 @@ class Domain::Game::Command::Split
 
     # randomly choose a stack to split
     candidate_origin_positions = @game.pastures.select do |pasture|
-      (pasture['stack']['color'] == @player.color) &&
+      (pasture['stack']['color'] == @player['color']) &&
         (pasture['stack']['amount'] >= 2) &&
         bypass_is_blocked(!pasture['is_blocked'])
     end

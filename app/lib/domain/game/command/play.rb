@@ -21,7 +21,7 @@ class Domain::Game::Command::Play
     end
 
     # if the player is not a ai player, reject
-    unless @player.ai?
+    unless @player['role'] == 'ai'
       Rails.logger.info { 'The player is not an AI player' }
       return
     end

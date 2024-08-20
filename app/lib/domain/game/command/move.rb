@@ -11,8 +11,8 @@ class Domain::Game::Command::Move
     # FIXME: Temporarily print the game data for debugging
     pp "game id: #{@game.id}"
     pp "game phase: #{@game.game_phase}"
-    pp "current player: #{@player.current_player.nickname}"
-    pp "incoming player: #{@player.nickname}"
+    pp "current player: #{@game.current_player['nickname']}"
+    pp "incoming player: #{@player['nickname']}"
 
     case @game.game_phase
     when 'place_stack'

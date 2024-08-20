@@ -8,9 +8,9 @@ class Domain::Game::Command::Play
   end
 
   def call
-    # if the game is ended, reject
-    if @game.ended?
-      Rails.logger.info { 'The game is ended' }
+    # if the game is finished, reject
+    if @game.finished?
+      Rails.logger.info { 'The game is finished?' }
       return
     end
 

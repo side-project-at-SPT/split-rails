@@ -96,7 +96,7 @@ class RoomChannel < ApplicationCable::Channel
 
     # trigger the first player to make a move
     current_player = room.games.last.current_player
-    Domain::Game::Command::Move.new(game: room.games.last, player: current_player).call
+    Domain::SplitGame::Command::Move.new(game: room.games.last, player: current_player).call
   end
 
   def close_game

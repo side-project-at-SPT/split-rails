@@ -1,4 +1,4 @@
-class Domain::Game::Command::Play
+class Domain::SplitGame::Command::Play
   def initialize(game: nil, player: nil)
     raise 'game is required' if game.nil?
     raise 'player is required' if player.nil?
@@ -48,6 +48,6 @@ class Domain::Game::Command::Play
     Domain::GameTurnStartedEvent.new(game_id: @game.id).dispatch
 
     # trigger the next player to play
-    Domain::Game::Command::Move.new(game: @game, player: @game.current_player).call
+    Domain::SplitGame::Command::Move.new(game: @game, player: @game.current_player).call
   end
 end

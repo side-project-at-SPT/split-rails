@@ -1,4 +1,4 @@
-class Domain::Game::Command::Move
+class Domain::SplitGame::Command::Move
   def initialize(game: nil, player: nil)
     raise 'game is required' if game.nil?
     raise 'player is required' if player.nil?
@@ -34,14 +34,14 @@ class Domain::Game::Command::Move
     Domain::GameTurnStartedEvent.new(game_id: @game.id).dispatch
 
     # trigger the next player to play
-    Domain::Game::Command::Move.new(game: @game, player: @game.current_player).call
+    Domain::SplitGame::Command::Move.new(game: @game, player: @game.current_player).call
   end
 
   def place_stack
-    Domain::Game::Command::Play.new(game: @game, player: @player).call
+    Domain::SplitGame::Command::Play.new(game: @game, player: @player).call
   end
 
   def split_stack
-    Domain::Game::Command::Split.new(game: @game, player: @player).call
+    Domain::SplitGame::Command::Split.new(game: @game, player: @player).call
   end
 end

@@ -1,4 +1,4 @@
-class Domain::Room::Command::AddAi
+class Domain::SplitRoom::Command::AddAi
   def initialize(room: nil, ai_player: nil)
     raise 'room is required' if room.nil?
     raise 'ai_player is required' if ai_player.nil?

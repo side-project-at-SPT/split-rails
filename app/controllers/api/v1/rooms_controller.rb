@@ -89,7 +89,7 @@ module Api
         ai_player = Visitor.where.not(id: room.players.pluck(:id)).role_ai.sample
         return render json: { error: 'AI player not found' }, status: :not_found unless ai_player
 
-        Domain::Room::Command::AddAi.new(room:, ai_player:).call
+        Domain::SplitRoom::Command::AddAi.new(room:, ai_player:).call
 
         render json: {
           message: 'AI player added to the room',

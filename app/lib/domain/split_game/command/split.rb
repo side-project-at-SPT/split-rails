@@ -26,24 +26,20 @@ class Domain::SplitGame::Command::Split
       return
     end
 
-    def bypass_is_blocked(*)
-      true
-    end
-
     # randomly choose a stack to split
     candidate_origin_positions = @game.pastures.select do |pasture|
       (pasture['stack']['color'] == @player['color']) &&
         (pasture['stack']['amount'] >= 2) &&
-        bypass_is_blocked(!pasture['is_blocked'])
+        (!pasture['is_blocked'])
     end
     raise 'No available position to split a stack' if candidate_origin_positions.empty?
 
-    candidate_positions = @game.pastures.select { |pasture| pasture['stack']['amount'].zero? }
-    raise 'No available position to place a stack' if candidate_positions.empty?
+    candidate_destination_positions = @game.pastures.select { |pasture| pasture['stack']['amount'].zero? }
+    raise 'No available position to place a stack' if candidate_destination_positions.empty?
 
     original_grid = candidate_origin_positions.sample
 
-    candidate_positions.sample.then do |grid|
+    candidate_destination_positions.sample.then do |grid|
       @game.split_stack(
         origin_x: original_grid['x'],
         origin_y: original_grid['y'],

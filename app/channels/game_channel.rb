@@ -51,6 +51,9 @@ class GameChannel < ApplicationCable::Channel
 
     Domain::GameStackPlacedEvent.new(game_id: @game.id).dispatch
     Domain::GameTurnStartedEvent.new(game_id: @game.id).dispatch
+
+    # trigger the next player's turn
+    Domain::SplitGame::Command::Move.new(game: @game, player: @game.current_player).call
   end
 
   def split_stack(data)
@@ -93,6 +96,9 @@ class GameChannel < ApplicationCable::Channel
       Domain::GameEndEvent.new(game_id: @game.id).dispatch
     else
       Domain::GameTurnStartedEvent.new(game_id: @game.id).dispatch
+
+      # trigger the next player's turn
+      Domain::SplitGame::Command::Move.new(game: @game, player: @game.current_player).call
     end
   end
 

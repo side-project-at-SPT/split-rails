@@ -24,19 +24,6 @@ class Domain::SplitGame::Command::Move
 
   private
 
-  def handle_place_stack_result(res)
-    if res.errors.any?
-      Rails.logger.error { res.errors.full_messages }
-      return
-    end
-
-    Domain::GameStackPlacedEvent.new(game_id: @game.id).dispatch
-    Domain::GameTurnStartedEvent.new(game_id: @game.id).dispatch
-
-    # trigger the next player to play
-    Domain::SplitGame::Command::Move.new(game: @game, player: @game.current_player).call
-  end
-
   def place_stack
     Domain::SplitGame::Command::Play.new(game: @game, player: @player).call
   end

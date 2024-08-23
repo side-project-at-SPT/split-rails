@@ -14,6 +14,9 @@ class Domain::SplitRoom::Command::AddAi
     # get ready
     @ai_player.ready!
 
+    @ai_player.character = 'alpha'
+    @ai_player.save
+
     @room.reload
 
     # notify lobby channel

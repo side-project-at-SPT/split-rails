@@ -11,6 +11,21 @@ module Step
     end
 
     def split_stack
+      is_ai = @game.players[@game.current_player_index]['role'] == 'ai'
+
+      # generate the animation event
+      animation_event_params = {}
+
+      if is_ai
+        animation_event_params = {
+          player: @game.players[@game.current_player_index],
+          from_x: @original_grid['x'],
+          from_y: @original_grid['y'],
+          to_x: @destination_grid['x'],
+          to_y: @destination_grid['y']
+        }
+      end
+
       @game_data.action = {
         author: @game.players[@game.current_player_index]['color'],
         action_name: 'split_stack',
@@ -122,6 +137,7 @@ module Step
       end
 
       # write to game_data
+      generate_animation_event(animation_event_params) if is_ai
 
       @game_data.step_number = @game.steps.last.step_number + 1
       @game_data.current_player_index = @game.current_player_index
@@ -137,6 +153,21 @@ module Step
 
     def check_blocked?(target, pastures)
       false
+    end
+
+    def generate_animation_event(player:, from_x:, from_y:, to_x:, to_y:)
+      custom_event_type = 'move_sheep'.freeze
+      GameChannel.broadcast_to(
+        @game,
+        {
+          type: custom_event_type,
+          actionPlayer: player['id'],
+          character: player['character'],
+          direction: 'go',
+          from: { x: from_x, y: from_y },
+          to: { x: to_x, y: to_y }
+        }
+      )
     end
   end
 end

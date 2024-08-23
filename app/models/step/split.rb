@@ -137,7 +137,7 @@ module Step
       end
 
       # write to game_data
-      generate_animation_event(animation_event_params) if is_ai
+      generate_animation_event(**animation_event_params) if is_ai
 
       @game_data.step_number = @game.steps.last.step_number + 1
       @game_data.current_player_index = @game.current_player_index

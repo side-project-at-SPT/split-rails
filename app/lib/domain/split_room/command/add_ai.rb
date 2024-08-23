@@ -1,4 +1,6 @@
 class Domain::SplitRoom::Command::AddAi
+  SAMPLE_CHARACTER = %w[tux gunter abc sin].freeze
+
   def initialize(room: nil, ai_player: nil)
     raise 'room is required' if room.nil?
     raise 'ai_player is required' if ai_player.nil?
@@ -14,7 +16,7 @@ class Domain::SplitRoom::Command::AddAi
     # get ready
     @ai_player.ready!
 
-    @ai_player.character = 'alpha'
+    @ai_player.character = SAMPLE_CHARACTER.sample
     @ai_player.save
 
     @room.reload

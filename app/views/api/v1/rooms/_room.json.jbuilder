@@ -8,3 +8,6 @@ json.players room.players do |player|
   json.role player.role
 end
 json.status room.status
+if room.status == 'playing'
+  json.game_id room.games.last.id
+end

@@ -1,0 +1,56 @@
+name: Push Change to Discord Webhook URL
+
+on:
+  push:
+    branches:
+      - main
+
+  # Allow manual trigger
+  workflow_dispatch:
+
+jobs:
+  send-to-discord-webhook-url:
+    runs-on: ubuntu-latest
+    steps:
+    - name: crawl-commit-message-headers
+      id: crawl-commit-message-headers
+      uses: actions/github-script@v7
+      with:
+        script: |
+          const commitMessage = context.payload.head_commit.message;
+          const commitMessageHeaders = commitMessage.split('\n')[0];
+          console.log(commitMessageHeaders);
+          core.exportVariable('commitMessageHeaders', commitMessageHeaders);
+    - name: build-discord-webhook-payload
+      id: build-discord-webhook-payload
+      uses: actions/github-script@v7
+      env:
+        # # sandbox webhook url
+        # DISCORD_WEBHOOK_URL: ${{ secrets.SANDBOX_DISCORD_WEBHOOK_URL }}
+        # real webhook url
+        DISCORD_WEBHOOK_URL: ${{ secrets.SPLIT_GAME_CHANNEL_DISCORD_WEBHOOK_URL }}
+      with:
+        script: |
+          const { commitMessageHeaders } = process.env;
+          const availableAvatarUrls = [
+            'https://media.discordapp.net/attachments/808663045109710898/1277146864906407988/image.png?ex=66ce1574&is=66ccc3f4&hm=f8dbff1de3b493dcdd0c8844a848efaa3c36b7296466d6709b9fe1c610561fa5&=&format=webp&quality=lossless',
+            'https://media.discordapp.net/attachments/808663045109710898/1277146864659070976/image.png?ex=66ce1574&is=66ccc3f4&hm=92594dbcba8a33e7505364f787b4893cf332e92aa5824a1646bf944be57c3655&=&format=webp&quality=lossless',
+            'https://media.discordapp.net/attachments/808663045109710898/1277146865158328331/image.png?ex=66ce1574&is=66ccc3f4&hm=dfa1646736b9ad59e297f10c0cf83a52fc99eba24615c6e5f6507ece9032a180&=&format=webp&quality=lossless',
+            'https://media.discordapp.net/attachments/808663045109710898/1277146865351262249/image.png?ex=66ce1574&is=66ccc3f4&hm=0241c136973320980b25d3a87138c30f875800e690b3eee028d5e44fbba2af2b&=&format=webp&quality=lossless'
+          ]
+          const discordWebhookPayload = {
+            content: '# 企鵝搶地後端 update' + '\n' + commitMessageHeaders,
+            username: 'GitHub Actions',
+            avatar_url: availableAvatarUrls.sort(() => Math.random() - 0.5)[0]
+          };
+          const req = new Request(process.env.DISCORD_WEBHOOK_URL, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(discordWebhookPayload)
+          });
+          const res = await fetch(req);
+          if (!res.ok) {
+            throw new Error(`HTTP error! status: ${res.status}`);
+          }

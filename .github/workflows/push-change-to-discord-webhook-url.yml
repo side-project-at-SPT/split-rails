@@ -25,11 +25,25 @@ jobs:
     - name: build-discord-webhook-payload
       id: build-discord-webhook-payload
       uses: actions/github-script@v7
+      env:
+        # DISCORD_WEBHOOK_URL: ${{ secrets.SANDBOX_DISCORD_WEBHOOK_URL }}
+        DISCORD_WEBHOOK_URL: ${{ secrets.SPLIT_GAME_CHANNEL_DISCORD_WEBHOOK_URL }}
       with:
         script: |
-          const commitMessageHeaders = process.env.commitMessageHeaders;
+          const { commitMessageHeaders } = process.env;
           const discordWebhookPayload = {
-            content: commitMessageHeaders
+            content: commitMessageHeaders,
+            username: 'GitHub Actions',
+            avatar_url: 'https://media.discordapp.net/attachments/808663045109710898/1277146864906407988/image.png?ex=66ce1574&is=66ccc3f4&hm=f8dbff1de3b493dcdd0c8844a848efaa3c36b7296466d6709b9fe1c610561fa5&=&format=webp&quality=lossless'
           };
-          console.log(discordWebhookPayload);
-          core.setOutput('discordWebhookPayload', discordWebhookPayload);
+          const req = new Request(process.env.DISCORD_WEBHOOK_URL, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(discordWebhookPayload)
+          });
+          const res = await fetch(req);
+          if (!res.ok) {
+            throw new Error(`HTTP error! status: ${res.status}`);
+          }

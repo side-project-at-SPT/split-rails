@@ -1,0 +1,28 @@
+name: Push Change to Discord Webhook URL
+
+on:
+  push:
+    branches:
+      - main
+      - 'tmp/receive-commit-to-trigger-GHA'
+
+  # Allow manual trigger
+  workflow_dispatch:
+
+jobs:
+  parse_commit_message:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Parse commit message
+        id: parse_commit_message
+        uses: actions/github-script@v4
+        with:
+          # github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const message = github.context.payload.head_commit.message;
+            const regex = /discord-webhook-url: (.*)/g;
+            const match = regex.exec(message);
+            console.log(match[1]);
+            console.log(`::set-output name=webhook_url::${match[1]}`)

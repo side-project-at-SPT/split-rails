@@ -21,7 +21,7 @@ jobs:
         with:
           # github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
-            const context = github.context;
+            # const context = github.context;
             # print the context's methods
             console.log(Object.keys(context));
             const message = github.context.payload.head_commit.message;

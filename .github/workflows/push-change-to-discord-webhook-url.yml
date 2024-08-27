@@ -21,7 +21,7 @@ jobs:
         with:
           # github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
-            const message = github.context.payload.head_commit.message;
+            const message = github.event.head_commit.message;
             const regex = /discord-webhook-url: (.*)/g;
             const match = regex.exec(message);
             console.log(match[1]);

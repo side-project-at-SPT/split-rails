@@ -10,10 +10,29 @@ on:
   workflow_dispatch:
 
 jobs:
-  parse_commit_message:
+  send-to-discord-webhook-url:
     runs-on: ubuntu-latest
     steps:
-    - name: View context attributes
+    # - name: View context attributes
+    #   uses: actions/github-script@v7
+    #   with:
+    #     script: console.log(context)
+    - name: crawl-commit-message-headers
       uses: actions/github-script@v7
       with:
-        script: console.log(context)
+        script: |
+          const commitMessage = context.payload.head_commit.message;
+          const commitMessageHeaders = commitMessage.split('\n')[0];
+          console.log(commitMessageHeaders);
+          core.setOutput('commitMessageHeaders', commitMessageHeaders);
+    - name: build-discord-webhook-payload
+      id: build-discord-webhook-payload
+      uses: actions/github-script@v7
+      with:
+        script: |
+          const commitMessageHeaders = core.getInput('commitMessageHeaders');
+          const discordWebhookPayload = {
+            content: commitMessageHeaders
+          };
+          console.log(discordWebhookPayload);
+          core.setOutput('discordWebhookPayload', discordWebhookPayload);

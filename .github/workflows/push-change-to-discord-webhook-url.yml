@@ -23,7 +23,7 @@ jobs:
           script: |
             # const context = github.context;
             # print the context's methods
-            console.log(Object.keys(context));
+            console.log(Object.keys(github.context));
             const message = github.context.payload.head_commit.message;
             const regex = /discord-webhook-url: (.*)/g;
             const match = regex.exec(message);

@@ -19,7 +19,7 @@ jobs:
         id: parse_commit_message
         uses: actions/github-script@v4
         with:
-          # github-token: ${{ secrets.GITHUB_TOKEN }}
+          github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
             # const context = github.context;
             # print the context's methods

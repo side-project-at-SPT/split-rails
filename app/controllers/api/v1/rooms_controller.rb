@@ -19,12 +19,8 @@ module Api
 
       # POST /api/v1/rooms
       def create
-        @room = Room.create!(name: params.fetch(:name, 'New Room'))
-
-        # Deprecated: User is automatically joined to the room
-        # Reason: User should join the room explicitly by calling /api/v1/rooms/:id/join or with websocket call
-        # user = Visitor.find(@jwt_request['sub'])
-        # room.players << user
+        current_user = Visitor.find(@jwt_request['sub'])
+        @room = Room.create!(name: params.fetch(:name, 'New Room'), owner_id: current_user.id)
 
         Domain::CreateRoomEvent.new(room_id: @room.id).dispatch
 
@@ -33,7 +29,8 @@ module Api
 
       # DELETE /api/v1/rooms/:id/close
       # 關閉房間
-      # issue #10: while closing room, call gaas end game if possible
+      # https://github.com/side-project-at-SPT/split-rails/issues/10
+      # While closing room, call gaas end game if possible
       # situation:
       #   1. room is not hosted by gaas player
       #     => won't call gaas end game

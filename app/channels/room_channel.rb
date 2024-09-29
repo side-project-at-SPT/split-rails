@@ -157,13 +157,15 @@ class RoomChannel < ApplicationCable::Channel
           {
             id: room.id,
             name: room.name,
+            owner_id: room.owner_id,
             players: room.players.map do |player|
                        {
                          id: player.id,
                          nickname: player.nickname,
                          character: player.character,
                          is_ready: player.ready?,
-                         role: player.role
+                         role: player.role,
+                         is_owner: player.id == room.owner_id
                        }
                      end
           },
@@ -179,10 +181,11 @@ class RoomChannel < ApplicationCable::Channel
         nickname: rp.nickname,
         character: rp.character,
         is_ready: rp.ready?,
-        role: rp.role
+        role: rp.role,
+        is_owner: rp.id == room.owner_id
       }
     end
 
-    broadcast_to(room, { event:, players:, status: room.status })
+    broadcast_to(room, { event:, owner_id: room.owner_id, players:, status: room.status })
   end
 end

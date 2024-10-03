@@ -117,7 +117,11 @@ module Api
           return render json: { token: user.encode_jwt }, status: :created
         end
 
-        return render json: { token: user.encode_jwt }, status: :ok if user.authenticate(password)
+        if user.authenticate(password)
+          # issue #16: set the old user to correct role
+          user.update!(role: :user) if user.role == :guest
+          return render json: { token: user.encode_jwt }, status: :ok
+        end
 
         render json: { error: 'Invalid name or password' }, status: :unauthorized
       end

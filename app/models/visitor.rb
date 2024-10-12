@@ -55,5 +55,15 @@ class Visitor < ApplicationRecord
     visitors_room&.update(character: value)
   end
 
+  class << self
+    def new_visitor(name: nil, password: nil, role: nil)
+      create!(
+        name: name || "guest_#{Time.now.strftime('%Y%m%d')}_#{SecureRandom.alphanumeric(10)}",
+        password: password || SecureRandom.alphanumeric(16),
+        role: role || :guest
+      )
+    end
+  end
+
   delegate :id, :name, to: :room, prefix: true, allow_nil: true
 end

@@ -188,6 +188,35 @@ paths:
       responses:
         '200':
           description: ok.
+    patch:
+      summary: 更新房間資料
+      tags:
+      - Rooms
+      security:
+      - bearerAuth: []
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: ok.
+        '404':
+          description: not found.
+        '401':
+          description: unauthorized.
+        '403':
+          description: forbidden.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
   "/api/v1/rooms/{id}/close":
     post:
       summary: 關閉房間

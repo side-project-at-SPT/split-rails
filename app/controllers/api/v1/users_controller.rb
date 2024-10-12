@@ -13,11 +13,7 @@ module Api
       end
 
       def login_as_visitor
-        user = Visitor.create!(
-          name: "guest_#{Time.now.strftime('%Y%m%d')}_#{SecureRandom.alphanumeric(10)}",
-          password: SecureRandom.alphanumeric(16),
-          role: :guest
-        )
+        user = Visitor.new_visitor
         user.update!(preferences: { nickname: 'guest' })
 
         render json: { token: user.encode_jwt }, status: :ok

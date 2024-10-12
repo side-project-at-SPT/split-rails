@@ -4,12 +4,14 @@ require 'swagger_helper'
 version = 'v1'
 
 RSpec.describe "#{version}/Rooms", type: :request do
-  # let :Authorization do
-  #   payload = { sub: user.id }
-  #   token = Api::JsonWebToken.encode payload
+  let(:user) { Visitor.new_visitor }
+  let(:room) { Room.create(name: 'room') }
+  let :Authorization do
+    payload = { sub: user.id }
+    token = Api::JsonWebToken.encode payload
 
-  #   "Bearer #{token}"
-  # end
+    "Bearer #{token}"
+  end
 
   path "/api/#{version}/rooms" do
     get '查詢房間列表' do
@@ -60,6 +62,48 @@ RSpec.describe "#{version}/Rooms", type: :request do
 
       response 200, 'ok.' do
         xit
+      end
+    end
+
+    patch '更新房間資料' do
+      tags 'Rooms'
+      # description ""
+      security [bearerAuth: []]
+      consumes 'application/json'
+      produces 'application/json'
+      parameter name: :id, in: :path, type: :string
+      parameter name: :payload, in: :body, schema: {
+        type: :object,
+        properties: {
+          name: { type: :string }
+        }
+      }
+
+      let(:id) { room.id }
+      let(:payload) { { name: 'new name' } }
+
+      context 'when the user is the owner' do
+        before { room.update(owner_id: user.id) }
+
+        response 200, 'ok.' do
+          run_test!
+        end
+
+        response 404, 'not found.' do
+          let(:id) { 'invalid' }
+
+          run_test!
+        end
+      end
+
+      response 401, 'unauthorized.' do
+        let(:Authorization) { nil }
+
+        run_test!
+      end
+
+      response 403, 'forbidden.' do
+        run_test!
       end
     end
   end

@@ -14,7 +14,7 @@ Rails.application.routes.draw do
       get 'me', to: 'users#show'
       resource :preferences, only: %i[show update]
 
-      resources :rooms, only: %i[index show create] do
+      resources :rooms, only: %i[index show create update] do
         member do
           post 'close', to: 'rooms#destroy'
           post 'game', to: 'games#create'

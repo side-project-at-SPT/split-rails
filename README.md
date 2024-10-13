@@ -2,7 +2,7 @@
 
 ## frontend: https://github.com/side-project-at-SPT/split-front
 
-## doc: https://spt-games-split.zeabur.app/api-docs
+## doc: https://side-project-at-spt.github.io/split-rails/
 
 ## Miro: https://miro.com/app/board/uXjVK7A5iEI=
 

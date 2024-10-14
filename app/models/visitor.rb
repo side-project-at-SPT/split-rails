@@ -55,6 +55,15 @@ class Visitor < ApplicationRecord
     visitors_room&.update(character: value)
   end
 
+  def owner_of?(room)
+    room.owner_id == id
+  end
+
+  def knock_knock(room)
+    payload = { sub: room.id }
+    Api::JsonWebToken.encode payload, 10.seconds.from_now
+  end
+
   class << self
     def new_visitor(name: nil, password: nil, role: nil)
       create!(

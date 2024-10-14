@@ -16,6 +16,7 @@ Rails.application.routes.draw do
 
       resources :rooms, only: %i[index show create update] do
         member do
+          get 'knock-knock', to: 'rooms#knock_knock'
           post 'close', to: 'rooms#destroy'
           post 'game', to: 'games#create'
           delete 'game', to: 'games#destroy'

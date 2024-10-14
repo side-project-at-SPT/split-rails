@@ -1,7 +1,7 @@
 module Api
   module V1
     class RoomsController < BaseController
-      before_action :set_room, only: %i[show update destroy add_ai_players]
+      before_action :set_room, only: %i[show update destroy add_ai_players knock_knock]
 
       # GET /api/v1/rooms
       def index
@@ -111,6 +111,18 @@ module Api
         else
           render json: { error: 'Room not updated' }, status: :unprocessable_entity
         end
+      end
+
+      # Provide token to subscribe to the room channel
+      def knock_knock
+        return render json: { error: 'Room not found' }, status: :not_found unless @room
+
+        user = Visitor.find_by(id: @jwt_request['sub'])
+        return render json: { error: 'User not found' }, status: :unauthorized unless user
+
+        return render json: { error: 'Room is full' }, status: :unprocessable_entity if @room.full?
+
+        render json: { token: user.knock_knock(@room) }, status: :ok
       end
 
       private

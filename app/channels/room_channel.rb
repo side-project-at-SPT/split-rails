@@ -1,5 +1,14 @@
 class RoomChannel < ApplicationCable::Channel
   def subscribed
+    begin
+      _decoded_token = Api::JsonWebToken.decode(params[:token])
+    rescue JWT::VerificationError, JWT::DecodeError => e
+      Rails.logger.error { "Error decoding the token: #{e.message}" }
+      transmit({ error: 'Invalid token' })
+      reject
+      return
+    end
+
     room = Room.find_by(id: params[:room_id])
 
     if room.nil?
@@ -110,6 +119,24 @@ class RoomChannel < ApplicationCable::Channel
     broadcast_to(room, { event: 'game_closed' })
     Rails.logger.debug("Game Status: #{room.status}")
     dispatch_to_lobby('game_closed', room)
+  end
+
+  # https://stackoverflow.com/questions/39815216/how-to-terminate-subscription-to-an-actioncable-channel-from-server
+  def kick_player(data)
+    room = Room.find_by(id: params[:room_id])
+
+    reject and return if room.nil?
+    reject and return unless current_user.owner_of?(room)
+
+    kicked_player = Visitor.find_by(id: data['player_id'])
+    reject and return if kicked_player.nil?
+
+    VisitorsRoom.where(room:, visitor: kicked_player).destroy_all
+
+    dispatch_to_room('room_updated', room)
+    dispatch_to_lobby('leave_room', room)
+
+    ActionCable.server.remote_connections.where(current_user: kicked_player).disconnect
   end
 
   private

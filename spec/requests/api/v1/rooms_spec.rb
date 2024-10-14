@@ -121,4 +121,44 @@ RSpec.describe "#{version}/Rooms", type: :request do
       end
     end
   end
+
+  path "/api/#{version}/rooms/{id}/knock-knock" do
+    get '取得加入房間 token' do
+      tags 'Rooms'
+      # description ""
+      security [bearerAuth: []]
+      produces 'application/json'
+      parameter name: :id, in: :path, type: :string
+
+      let(:id) { room.id }
+
+      response 200, 'ok.' do
+        run_test! do |response|
+          expect(JSON.parse(response.body)).to have_key('token')
+          expect(Api::JsonWebToken.decode(JSON.parse(response.body)['token'])['sub']).to eq(room.id)
+        end
+      end
+
+      response 404, 'not found.' do
+        let(:id) { 'invalid' }
+
+        run_test!
+      end
+
+      response 401, 'unauthorized.' do
+        let(:Authorization) { nil }
+
+        run_test!
+      end
+
+      response 422, 'unprocessable entity. see response.error.' do
+        before do
+          players = 4.times.map { Visitor.new_visitor }
+          players.each { |player| room.players << player }
+        end
+
+        run_test!
+      end
+    end
+  end
 end

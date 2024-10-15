@@ -30,6 +30,8 @@ class Visitor < ApplicationRecord
   end
 
   def nickname
+    return AiPlayer.find_by(player_id: id)&.nickname || 'none' if role_ai?
+
     self.preferences&.dig('nickname') || 'none'
   end
 

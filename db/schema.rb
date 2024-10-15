@@ -10,9 +10,26 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2024_09_29_170448) do
+ActiveRecord::Schema[7.1].define(version: 2024_10_15_194901) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
+
+  create_table "ai_players", id: false, force: :cascade do |t|
+    t.bigint "bot_id", null: false
+    t.bigint "player_id", null: false
+    t.index ["bot_id"], name: "index_ai_players_on_bot_id"
+    t.index ["player_id"], name: "index_ai_players_on_player_id"
+  end
+
+  create_table "bots", force: :cascade do |t|
+    t.string "name", null: false
+    t.bigint "visitor_id", null: false
+    t.string "webhook_url", null: false
+    t.integer "concurrent_number", default: 1, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["visitor_id"], name: "index_bots_on_visitor_id"
+  end
 
   create_table "game_steps", force: :cascade do |t|
     t.bigint "game_id", null: false
@@ -65,6 +82,7 @@ ActiveRecord::Schema[7.1].define(version: 2024_09_29_170448) do
     t.index ["visitor_id"], name: "index_visitors_rooms_on_visitor_id"
   end
 
+  add_foreign_key "bots", "visitors"
   add_foreign_key "game_steps", "games"
   add_foreign_key "visitors_rooms", "rooms"
   add_foreign_key "visitors_rooms", "visitors"

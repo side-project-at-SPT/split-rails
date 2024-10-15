@@ -24,7 +24,7 @@ jobs:
                   const commitId = commit.id.slice(0, 7);
                   const commitUrl = commit.url;
                   return [commitMessageHeaders, commitId, commitUrl];
-                })
+                }).reverse()
               )
             );
       - name: build-discord-webhook-payload

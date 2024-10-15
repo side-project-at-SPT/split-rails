@@ -7,7 +7,7 @@ module Api
 
       # GET /api/v1/users
       def index
-        @users = Visitor.all
+        @users = Visitor.all.includes(:room)
 
         render status: :ok
       end

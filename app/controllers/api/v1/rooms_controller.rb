@@ -54,9 +54,9 @@ module Api
 
         user = Visitor.find(@jwt_request['sub'])
 
-        unless @room.players.include?(user)
-          return render json: { error: 'You are not in this room' },
-                        status: :unauthorized
+        unless user.owner_of?(@room)
+          return render json: { error: 'You are not the owner of this room' },
+                        status: :forbidden
         end
 
         @room.call_gaas_end_game(@jwt_request[:gaas_auth0_token])

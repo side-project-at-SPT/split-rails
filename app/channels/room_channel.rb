@@ -153,6 +153,7 @@ class RoomChannel < ApplicationCable::Channel
 
     dispatch_to_room('room_updated', room)
     dispatch_to_lobby('join_room', room)
+    interrupt_start_game
   end
 
   def room_leave_with(room, player)

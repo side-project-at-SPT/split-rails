@@ -32,9 +32,9 @@ jobs:
         uses: actions/github-script@v7
         env:
           # # sandbox webhook url
-          # DISCORD_WEBHOOK_URL: ${{ secrets.SANDBOX_DISCORD_WEBHOOK_URL }}
+          DISCORD_WEBHOOK_URL: ${{ secrets.SANDBOX_DISCORD_WEBHOOK_URL }}
           # real webhook url
-          DISCORD_WEBHOOK_URL: ${{ secrets.SPLIT_GAME_CHANNEL_DISCORD_WEBHOOK_URL }}
+          # DISCORD_WEBHOOK_URL: ${{ secrets.SPLIT_GAME_CHANNEL_DISCORD_WEBHOOK_URL }}
           avatarHost: "https://raw.githubusercontent.com/side-project-at-SPT/split-front/main/src/assets/images/"
         with:
           script: |

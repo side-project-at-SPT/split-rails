@@ -4,6 +4,7 @@ module Api
       skip_before_action :verify_authenticity_token
       before_action :load_jwt_request
       rescue_from ActionController::ParameterMissing, with: :render_parameter_missing
+      rescue_from ActiveRecord::RecordNotFound, with: :render_not_found
 
       # force response to be JSON
       before_action do
@@ -12,6 +13,14 @@ module Api
 
       def render_parameter_missing(exception)
         render json: { error: exception.message }, status: :bad_request
+      end
+
+      def render_not_found(exception)
+        if request.put? || request.delete?
+          render json: { error: 'Permission denied' }, status: :forbidden
+        else
+          render json: { error: "#{exception.model} not found" }, status: :not_found
+        end
       end
 
       private

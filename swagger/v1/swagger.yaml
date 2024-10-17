@@ -10,6 +10,152 @@ components:
       scheme: bearer
       bearerFormat: JWT
 paths:
+  "/api/v1/bots":
+    get:
+      summary: 查詢所有機器人
+      tags:
+      - Bots
+      security:
+      - bearerAuth: []
+      responses:
+        '200':
+          description: ok.
+        '401':
+          description: Unauthorized
+    post:
+      summary: 註冊機器人
+      tags:
+      - Bots
+      security:
+      - bearerAuth: []
+      parameters: []
+      responses:
+        '201':
+          description: created.
+        '401':
+          description: Unauthorized
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                  example: bot1
+                webhook_url:
+                  type: string
+                  example: https://localhost:3000/mybot/c8763
+                concurrent_number:
+                  type: integer
+                  example: 1
+  "/api/v1/bots/{id}":
+    get:
+      summary: 查詢機器人
+      tags:
+      - Bots
+      security:
+      - bearerAuth: []
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: ok.
+        '401':
+          description: Unauthorized
+        '404':
+          description: Not Found
+    put:
+      summary: 更新機器人(replace)
+      tags:
+      - Bots
+      security:
+      - bearerAuth: []
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: ok.
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                  example: bot1
+                webhook_url:
+                  type: string
+                  example: https://localhost:3000/mybot/c8763
+                concurrent_number:
+                  type: integer
+                  example: 1
+    patch:
+      summary: 更新機器人(partial)
+      tags:
+      - Bots
+      security:
+      - bearerAuth: []
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: ok.
+        '401':
+          description: Unauthorized
+        '404':
+          description: Not Found
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                  example: bot1
+                webhook_url:
+                  type: string
+                  example: https://localhost:3000/mybot/c8763
+                concurrent_number:
+                  type: integer
+                  example: 1
+    delete:
+      summary: 刪除機器人
+      tags:
+      - Bots
+      security:
+      - bearerAuth: []
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        '204':
+          description: ok.
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
   "/api/v1/rooms/{room_id}/game":
     post:
       summary: 開始遊戲
@@ -233,6 +379,28 @@ paths:
       responses:
         '200':
           description: ok.
+  "/api/v1/rooms/{id}/knock-knock":
+    get:
+      summary: 取得加入房間 token
+      tags:
+      - Rooms
+      security:
+      - bearerAuth: []
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: ok.
+        '404':
+          description: not found.
+        '401':
+          description: unauthorized.
+        '422':
+          description: unprocessable entity. see response.error.
   "/api/v1/users":
     post:
       summary: 登入

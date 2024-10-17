@@ -39,6 +39,7 @@ Rails.application.routes.draw do
           post 'split-stack', to: 'games#split_stack'
         end
       end
+      resources :bots, only: %i[create index update destroy show]
     end
   end
 

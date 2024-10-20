@@ -109,6 +109,8 @@ RSpec.describe "#{version}/Rooms", type: :request do
   end
 
   path "/api/#{version}/rooms/{id}/close" do
+    let(:id) { room.id }
+
     post '關閉房間' do
       tags 'Rooms'
       # description ""
@@ -117,20 +119,46 @@ RSpec.describe "#{version}/Rooms", type: :request do
       parameter name: :id, in: :path, type: :string
 
       response 200, 'ok.' do
-        xit
+        before { room.update(owner_id: user.id) }
+
+        run_test!
+      end
+
+      response 404, 'not found.' do
+        let(:id) { 'invalid' }
+
+        run_test!
+      end
+
+      response 401, 'unauthorized.' do
+        let(:Authorization) { nil }
+
+        run_test!
+      end
+
+      response 403, 'forbidden.' do
+        run_test!
+      end
+
+      context 'when the user is admin' do
+        before { user.role_admin! }
+
+        response 200, 'ok.' do
+          run_test!
+        end
       end
     end
   end
 
   path "/api/#{version}/rooms/{id}/knock-knock" do
+    let(:id) { room.id }
+
     get '取得加入房間 token' do
       tags 'Rooms'
       # description ""
       security [bearerAuth: []]
       produces 'application/json'
       parameter name: :id, in: :path, type: :string
-
-      let(:id) { room.id }
 
       response 200, 'ok.' do
         run_test! do |response|

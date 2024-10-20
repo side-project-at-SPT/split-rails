@@ -49,22 +49,16 @@ module Api
       #     => save gaas_token in redis: type: list, key 'room:#{room.id}:gaas_tokens', value: [gaas_token1, gaas_token2, ...]
       #   when close room, call gaas end game if possible
       def destroy
-        return render json: { error: 'Room not found' }, status: :not_found unless @room
-        return render json: { error: 'Room is already closed' }, status: :unprocessable_entity if @room.closed?
-
-        user = Visitor.find(@jwt_request['sub'])
-
-        unless user.owner_of?(@room)
-          return render json: { error: 'You are not the owner of this room' },
-                        status: :forbidden
+        case result = Domain::SplitRoom::Command::Close.new(room: @room, user_request: @jwt_request).call.error
+        in nil then head :ok
+        in Domain::SplitRoom::Command::RoomIsRequired
+          render json: { error: 'Room not found' }, status: :not_found
+        in Domain::SplitRoom::Command::UserIsRequired
+          render json: { error: 'User not found' }, status: :unauthorized
+        in Domain::SplitRoom::Command::UserIsNotOwner
+          render json: { error: 'You are not the owner of this room' }, status: :forbidden
+        else render json: { error: result.message }, status: :unprocessable_entity
         end
-
-        @room.call_gaas_end_game(@jwt_request[:gaas_auth0_token])
-        @room.close
-
-        Domain::CloseRoomEvent.new(room_id: @room.id).dispatch
-
-        head :ok
       end
 
       # POST /api/v1/rooms/:id/ai_players

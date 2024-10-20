@@ -34,7 +34,7 @@ module Domain
         end
 
         def can_close_the_room?
-          room.created_at > 2.hours.ago || room.owner_id == user.id || user.role_admin?
+          room.created_at < 2.hours.ago || room.owner_id == user.id || user.role_admin?
         end
       end
 

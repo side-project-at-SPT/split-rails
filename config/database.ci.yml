@@ -1,0 +1,10 @@
+# ref: https://blog.niclin.tw/2019/10/31/building-a-rails-ci-piepline-and-run-rspec-on-github-actions/
+test:
+  adapter: postgresql
+  encoding: unicode
+  pool: <%= ENV.fetch("RAILS_MAX_THREADS") { 5 } %>
+  username: <%= ENV['PG_USERNAME'] %>
+  password: <%= ENV['PG_PASSWORD'] %>
+  host: <%= ENV['PG_HOST'] %>
+  port: <%= ENV['PG_PORT'] %>
+  database: <%= ENV['PG_DATABASE'] %>

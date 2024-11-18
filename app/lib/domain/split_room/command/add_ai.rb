@@ -1,5 +1,5 @@
 class Domain::SplitRoom::Command::AddAi
-  SAMPLE_CHARACTER = %w[tux gunter abc sin].freeze
+  SAMPLE_CHARACTER = %w[papua eudyptula aptenodytes eudyptes].freeze
 
   def initialize(room: nil, ai_player: nil)
     raise 'room is required' if room.nil?

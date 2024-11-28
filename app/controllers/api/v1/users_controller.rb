@@ -125,7 +125,7 @@ module Api
       # GET /api/v1/me
       def show
         # TODO: error handling
-        unless @jwt_request['sub']
+        unless @jwt_request&.key?('sub')
           return render json: {
             error: 'No sub in the token'
           }, status: :unauthorized

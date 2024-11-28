@@ -29,12 +29,17 @@ module ApplicationCable
       else
         token = auth_token.gsub(/^Bearer /, '')
         decoded_token = Api::JsonWebToken.decode(token)
-        Rails.logger.debug { "decoded_token: #{decoded_token}" }
-        Rails.logger.debug { 'try to find the user' }
+        if decoded_token.nil?
+          Rails.logger.warn { 'Token is invalid' }
+          Rails.logger.warn { "token: #{token}" }
+        else
+          Rails.logger.debug { "decoded_token: #{decoded_token}" }
+          Rails.logger.debug { 'try to find the user' }
 
-        if (current_user = Visitor.find_by(id: decoded_token[:sub]))
-          $redis.set("user:#{current_user.id}:gaas_auth0_token", token) if decoded_token[:gaas_auth0_token]
-          return current_user
+          if (current_user = Visitor.find_by(id: decoded_token[:sub]))
+            $redis.set("user:#{current_user.id}:gaas_auth0_token", token) if decoded_token[:gaas_auth0_token]
+            return current_user
+          end
         end
       end
 

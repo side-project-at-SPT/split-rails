@@ -26,8 +26,11 @@ class Domain::SplitGame::Command::Play
       return
     end
 
-    # randomly place a stack
-    candidate_positions = @game.pastures.select { |pasture| pasture['stack']['amount'].zero? }
+    # randomly place a stack in boundary
+    boundary = Domain::SplitGame::Query::ShowBoundary.new(game: @game).call
+    candidate_positions = @game.pastures.select { |pasture| pasture['stack']['amount'].zero? }.select do |pasture|
+      boundary.any? { |grid| grid['x'] == pasture['x'] && grid['y'] == pasture['y'] }
+    end
     raise 'No available position to place a stack' if candidate_positions.empty?
 
     candidate_positions

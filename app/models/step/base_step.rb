@@ -12,15 +12,15 @@ module Step
 
     SHEEP_INITIAL_QUANTITY = 16
 
-    def initialize(game, step_type:, destination_grid: nil, original_grid: nil)
+    def initialize(game, params = {})
       @errors = ActiveModel::Errors.new(self)
 
       @game = game
-      @step_type = step_type
-      @game_data = GameStep.new(game:, step_type:)
+      @step_type = params.fetch(:step_type)
+      @game_data = GameStep.new(game:, step_type: @step_type)
       @previous_pastures = game.pastures
-      @original_grid = original_grid
-      @destination_grid = destination_grid
+      @original_grid = params[:original_grid]
+      @destination_grid = params[:destination_grid]
     end
 
     attr_reader :errors

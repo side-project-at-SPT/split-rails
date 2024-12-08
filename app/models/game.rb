@@ -189,8 +189,8 @@ class Game < ApplicationRecord
     steps.last.action
   end
 
-  def initialize_map_by_system
-    Step::InitializeMapBySystem.new(self).exec
+  def initialize_map_by_system(seed: nil)
+    Step::InitializeMapBySystem.new(self, seed:).exec
   end
 
   def pastures_of_player_color(color)

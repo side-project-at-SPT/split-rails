@@ -1,6 +1,7 @@
 module Step
   class InitializeMapBySystem < BaseStep
     def initialize(game, params = {})
+      @seed = params[:seed]
       super(game, step_type: 'initialize_map_by_system', **params)
     end
 
@@ -15,6 +16,8 @@ module Step
 
     def initialize_map_by_system
       errors.add(:base, 'The map is already initialized') and return unless @game.game_phase == 'build map'
+
+      srand(@seed) if @seed
 
       flag_map_generate_strategy = $redis.get('flag_map_generate_strategy') || SIMPLY_RANDOMLY_PLACE_GRID
       case flag_map_generate_strategy.to_i

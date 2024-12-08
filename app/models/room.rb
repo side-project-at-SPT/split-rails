@@ -25,15 +25,15 @@ class Room < ApplicationRecord
   end
 
   # TODO: move to Game model
-  def start_new_game
+  def start_new_game(seed: nil)
     game = Game.create do |g|
-      seed = created_at.to_i
+      seed ||= created_at.to_i
       g.room = self
       g.players = generate_players(seed:)
       g.current_player_index = (seed * 13 + 17) % g.players.size
     end
 
-    game.initialize_map_by_system if game.should_initialize_map_by_system?
+    game.initialize_map_by_system(seed:) if game.should_initialize_map_by_system?
     game
   end
 

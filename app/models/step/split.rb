@@ -62,7 +62,15 @@ module Step
       end
 
       # you can only split a stack in a non-blocked pasture
-      unless original_grid['is_blocked'] == false
+      if original_grid['is_blocked'] == true
+        Rails.logger.warn { "Origin pasture is blocked: #{original_grid}" }
+        # show the neighbor pastures for debugging
+        [[0, 1], [1, 0], [1, -1], [0, -1], [-1, 0], [-1, 1]].each do |dx, dy|
+          neighbor = @previous_pastures.find do |pasture|
+            pasture['x'] == original_grid['x'] + dx && pasture['y'] == original_grid['y'] + dy
+          end
+          Rails.logger.warn { "Neighbor pasture: #{neighbor}" } if neighbor
+        end
         errors.add(:base, 'You can only split a stack in a non-blocked pasture') and return
       end
 

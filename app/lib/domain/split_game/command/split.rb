@@ -26,29 +26,43 @@ class Domain::SplitGame::Command::Split
       return
     end
 
-    # randomly choose a stack to split
-    candidate_origin_positions = @game.pastures.select do |pasture|
-      (pasture['stack']['color'] == @player['color']) &&
-        (pasture['stack']['amount'] >= 2) &&
-        (!pasture['is_blocked'])
-    end
-    raise 'No available position to split a stack' if candidate_origin_positions.empty?
+    # # randomly choose a stack to split
+    # candidate_origin_positions = @game.pastures.select do |pasture|
+    #   (pasture['stack']['color'] == @player['color']) &&
+    #     (pasture['stack']['amount'] >= 2) &&
+    #     (!pasture['is_blocked'])
+    # end
+    # raise 'No available position to split a stack' if candidate_origin_positions.empty?
 
-    candidate_destination_positions = @game.pastures.select { |pasture| pasture['stack']['amount'].zero? }
-    raise 'No available position to place a stack' if candidate_destination_positions.empty?
+    # candidate_destination_positions = @game.pastures.select { |pasture| pasture['stack']['amount'].zero? }
+    # raise 'No available position to place a stack' if candidate_destination_positions.empty?
 
-    original_grid = candidate_origin_positions.sample
+    # original_grid = candidate_origin_positions.sample
 
-    candidate_destination_positions.sample.then do |grid|
-      @game.split_stack(
-        origin_x: original_grid['x'],
-        origin_y: original_grid['y'],
-        target_x: grid['x'],
-        target_y: grid['y'],
-        target_amount: original_grid['stack']['amount'] / 2
-      )
-    end
-      .then { |res| handle_split_stack_result(res) }
+    # candidate_destination_positions.sample.then do |grid|
+    #   @game.split_stack(
+    #     origin_x: original_grid['x'],
+    #     origin_y: original_grid['y'],
+    #     target_x: grid['x'],
+    #     target_y: grid['y'],
+    #     target_amount: original_grid['stack']['amount'] / 2
+    #   )
+    # end
+    #   .then { |res| handle_split_stack_result(res) }
+
+    # query available split action and randomly choose one
+    available_split_actions = Domain::SplitGame::Query::ShowAvailableSplitAction.new(game: @game).call
+    raise 'No available split action' if available_split_actions.empty?
+
+    original_grid, target_x, target_y = available_split_actions.sample
+
+    @game.split_stack(
+      origin_x: original_grid['x'],
+      origin_y: original_grid['y'],
+      target_x:,
+      target_y:,
+      target_amount: original_grid['stack']['amount'] / 2
+    ).then { |res| handle_split_stack_result(res) }
   end
 
   private

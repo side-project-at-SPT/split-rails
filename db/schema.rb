@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2024_10_15_194901) do
+ActiveRecord::Schema[7.1].define(version: 2025_03_22_190021) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -28,6 +28,7 @@ ActiveRecord::Schema[7.1].define(version: 2024_10_15_194901) do
     t.integer "concurrent_number", default: 1, null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.string "status", default: "offline", null: false
     t.index ["visitor_id"], name: "index_bots_on_visitor_id"
   end
 

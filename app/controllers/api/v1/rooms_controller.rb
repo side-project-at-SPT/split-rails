@@ -1,7 +1,7 @@
 module Api
   module V1
     class RoomsController < BaseController
-      before_action :set_room, only: %i[show update destroy add_ai_players knock_knock]
+      before_action :set_room, only: %i[show update destroy bots knock_knock]
 
       # GET /api/v1/rooms
       def index
@@ -61,32 +61,46 @@ module Api
         end
       end
 
-      # POST /api/v1/rooms/:id/ai_players
+      # POST /api/v1/rooms/:id/bots
       # Add a random AI player to the room
       # constraints:
       #  1. request user must be in the same room
-      def add_ai_players
-        return render json: { error: 'Room not found' }, status: :not_found unless @room
+      def bots
+        response_json = {}
+        regexp = %r{/api/v1/rooms/\d+/ai_players}
+        if request.path.scan(regexp).any?
+          response_json[:warning] = '/api/v1/rooms/:id/ai_players is deprecated. Use /api/v1/rooms/:id/bots instead.'
+        end
+
+        unless @room
+          return render json: response_json.merge(
+            { error: 'Room not found' }
+          ), status: :not_found
+        end
 
         user = Visitor.find(@jwt_request['sub'])
         unless @room.players.include?(user)
-          return render json: { error: 'You are not in this room' },
+          return render json: response_json.merge({ error: 'You are not in this room' }),
                         status: :unauthorized
         end
 
         # if room is full, return error
-        return render json: { error: 'Room is full' }, status: :unprocessable_entity if @room.full?
+        return render json: response_json.merge({ error: 'Room is full' }), status: :unprocessable_entity if @room.full?
 
-        ai_player = Visitor.where.not(id: @room.players.pluck(:id)).role_ai.sample
-        return render json: { error: 'AI player not found' }, status: :not_found unless ai_player
+        bot = Bot.online.sample
 
-        Domain::SplitRoom::Command::AddAi.new(room: @room, ai_player:).call
+        # if no bot is online, return
+        return render json: response_json.merge({ message: 'No AI player available', room_id: @room.id }) unless bot
 
-        render json: {
-          message: 'AI player added to the room',
-          room_id: @room.id,
-          ai_player_id: ai_player.id
-        }
+        ai_player_id = bot.join_room(@room)
+
+        render json: response_json.merge(
+          {
+            message: 'AI player added to the room',
+            room_id: @room.id,
+            ai_player_id:
+          }
+        )
       end
 
       def update

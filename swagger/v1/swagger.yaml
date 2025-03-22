@@ -379,6 +379,12 @@ paths:
       responses:
         '200':
           description: ok.
+        '404':
+          description: not found.
+        '401':
+          description: unauthorized.
+        '403':
+          description: forbidden.
   "/api/v1/rooms/{id}/knock-knock":
     get:
       summary: 取得加入房間 token
@@ -401,6 +407,44 @@ paths:
           description: unauthorized.
         '422':
           description: unprocessable entity. see response.error.
+  "/api/v1/rooms/{id}/bots":
+    post:
+      summary: 新增 AI 玩家
+      tags:
+      - Rooms
+      security:
+      - bearerAuth: []
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: ok.
+        '404':
+          description: not found.
+        '401':
+          description: unauthorized.
+        '422':
+          description: unprocessable entity. see response.error.
+  "/api/v1/rooms/{id}/ai_players":
+    post:
+      summary: "(即將棄用)新增 AI 玩家"
+      tags:
+      - Deprecated
+      security:
+      - bearerAuth: []
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: ok.
   "/api/v1/users":
     post:
       summary: 登入

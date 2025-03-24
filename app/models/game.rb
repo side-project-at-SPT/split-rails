@@ -12,8 +12,14 @@ class Game < ApplicationRecord
     players[current_player_index]
   end
 
+  # [ ]: Search where this method is used
   def close
     update!(is_finished: true)
+  end
+
+  def close_by(user: nil)
+    Domain::SplitGame::Command::Close.new(game: self, invoker: user).call
+    close
   end
 
   def on_going?

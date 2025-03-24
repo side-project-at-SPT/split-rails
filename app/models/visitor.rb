@@ -7,7 +7,13 @@ class Visitor < ApplicationRecord
   validates :name, presence: true, uniqueness: true
   validate :allow_preferences_attributes?
 
-  enum role: { admin: 0, user: 1, guest: 2, ai: 3 }, _prefix: true
+  enum :role, {
+    admin: 0,
+    user: 1,
+    guest: 2,
+    ai: 3,
+    test_dummy: 4
+  }, prefix: true
 
   def encode_jwt
     payload = { sub: id }

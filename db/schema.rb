@@ -10,16 +10,9 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2025_03_22_190021) do
+ActiveRecord::Schema[7.1].define(version: 2025_03_25_192840) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
-
-  create_table "ai_players", id: false, force: :cascade do |t|
-    t.bigint "bot_id", null: false
-    t.bigint "player_id", null: false
-    t.index ["bot_id"], name: "index_ai_players_on_bot_id"
-    t.index ["player_id"], name: "index_ai_players_on_player_id"
-  end
 
   create_table "bots", force: :cascade do |t|
     t.string "name", null: false
@@ -70,6 +63,8 @@ ActiveRecord::Schema[7.1].define(version: 2025_03_22_190021) do
     t.datetime "updated_at", null: false
     t.json "preferences"
     t.integer "role", default: 2, null: false
+    t.bigint "bot_id"
+    t.index ["bot_id"], name: "index_visitors_on_bot_id"
   end
 
   create_table "visitors_rooms", force: :cascade do |t|
@@ -85,6 +80,7 @@ ActiveRecord::Schema[7.1].define(version: 2025_03_22_190021) do
 
   add_foreign_key "bots", "visitors"
   add_foreign_key "game_steps", "games"
+  add_foreign_key "visitors", "bots"
   add_foreign_key "visitors_rooms", "rooms"
   add_foreign_key "visitors_rooms", "visitors"
 end

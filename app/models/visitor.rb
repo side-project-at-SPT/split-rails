@@ -3,6 +3,7 @@ class Visitor < ApplicationRecord
 
   has_one :visitors_room, dependent: :destroy
   has_one :room, through: :visitors_room
+  belongs_to :bot, optional: true
 
   validates :name, presence: true, uniqueness: true
   validate :allow_preferences_attributes?
@@ -36,7 +37,7 @@ class Visitor < ApplicationRecord
   end
 
   def nickname
-    return AiPlayer.find_by(player_id: id)&.nickname || 'none' if role_ai?
+    return bot&.name || 'none' if role_ai?
 
     self.preferences&.dig('nickname') || 'none'
   end

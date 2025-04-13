@@ -204,6 +204,8 @@ class Game < ApplicationRecord
 
   def initialize_map_by_system(seed: nil)
     Step::InitializeMapBySystem.new(self, seed:).exec
+
+    show_map if Rails.env.test?
   end
 
   def pastures_of_player_color(color)
@@ -214,5 +216,34 @@ class Game < ApplicationRecord
 
   def calculate_current_player_index
     (created_at.to_i * 13 + 17) % players.size
+  end
+
+  def show_map
+    grids = {}
+    pastures.each do |pasture|
+      grids["#{pasture['x']},#{pasture['y']}"] = "#{pasture['x']},#{pasture['y']}"
+    end
+
+    # find max x
+    max_x = grids.keys.map { |k| k.split(',')[0].to_i }.max
+    # find max y
+    max_y = grids.keys.map { |k| k.split(',')[1].to_i }.max
+
+    # print the map
+    # hint: the map is hexagonal, so we need to adjust the x coordinate
+    maps = []
+    # 0  1  2  3  4  5  6  7  8  9 10 11 12 13 14 15
+    maps << (0..max_x).map { |x| x.to_s.rjust(3).red }.unshift('--').join('  .')
+    (0..max_y).each do |y|
+      # print the y coordinate
+      maps << [[y.to_s.rjust(3).green, '   ' * y].join]
+      (0..max_x).each do |x|
+        maps.last << (grids["#{x},#{y}"] || '   ')
+      end
+
+      maps[-1] = maps.last.join('   ')
+    end
+
+    puts maps.join("\n")
   end
 end

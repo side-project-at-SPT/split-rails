@@ -13,16 +13,16 @@ module Domain
 
           raise NotAiPlayerError, 'The player is not an AI player' unless @player['role'].in? %w[ai test_dummy]
 
-          unless @player['id'] == @game.current_player['id']
-            raise NotCurrentPlayerError,
-                  "Current player: #{@game.current_player['id']}"
-          end
+          return if @player['id'] == @game.current_player['id']
 
-          # FIXME: Temporarily print the game data for debugging
-          pp "game id: #{@game.id}"
-          pp "game phase: #{@game.game_phase}"
-          pp "current player: #{@game.current_player['nickname']}"
-          pp "incoming player: #{@player['nickname']}"
+          raise NotCurrentPlayerError,
+                "Current player: #{@game.current_player['id']}"
+
+          # # FIXME: Temporarily print the game data for debugging
+          # pp "game id: #{@game.id}"
+          # pp "game phase: #{@game.game_phase}"
+          # pp "current player: #{@game.current_player['nickname']}"
+          # pp "incoming player: #{@player['nickname']}"
         end
 
         def call

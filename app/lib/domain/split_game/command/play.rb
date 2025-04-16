@@ -13,17 +13,19 @@ module Domain
         end
 
         def call
-          if Rails.env.test?
-            puts 'Running in test environment, skipping AI move'
-            puts 'show player'
-            pp @player
-            bot = @player.bot
-            info = {}
-            res = bot.generate_grid_to_place_stack(info)
-            pp res
+          # if Rails.env.test?
+          #   puts 'Running in test environment, skipping AI move'
+          #   puts 'show player'
+          #   pp @player
+          #   # raise 'here'
+          # end
 
-            # raise 'here'
-          end
+          bot = @player.bot
+          info = @game.game_data
+          # debugger
+          # pp @game
+          res = bot.generate_grid_to_place_stack(info)
+          pp res
 
           # randomly place a stack in boundary
           boundary = Domain::SplitGame::Query::ShowBoundary.new(game: @game).call
